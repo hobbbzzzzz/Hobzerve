@@ -194,7 +194,7 @@ function MonthGrid({ days, selected, onSelect }: { days: Json[]; selected: strin
                   onClick={() => onSelect(d.date)}
                   className={clsx(
                     "relative flex h-20 w-full flex-col items-start rounded-[12px] border p-1.5 text-left transition-colors sm:h-24 sm:p-2",
-                    isSel ? "border-primary bg-[#eef1ff] shadow-[var(--shadow-glow)]" : "border-line bg-surface hover:bg-surface-alt",
+                    isSel ? "border-primary bg-selected shadow-[var(--shadow-glow)]" : "border-line bg-surface hover:bg-surface-alt",
                     !d.in_month && !isSel && "border-dashed bg-surface-alt/50",
                     outside && "bg-[repeating-linear-gradient(135deg,#f4f6fb_0_6px,#ffffff_6px_12px)]",
                   )}
@@ -223,7 +223,7 @@ function MonthGrid({ days, selected, onSelect }: { days: Json[]; selected: strin
                     {d.completions > 0 && <CheckCircle size={10} className="text-success" aria-hidden />}
                     {d.unassigned_seconds > 0 && <Warning size={10} className="text-warning" aria-hidden />}
                     {d.due_count > 0 && (
-                      <span className="inline-flex items-center gap-0.5 text-[#5b45c4]">
+                      <span className="inline-flex items-center gap-0.5 text-lavender-ink">
                         <FlagBanner size={10} aria-hidden />
                         {d.due_count}
                       </span>
@@ -256,7 +256,7 @@ function Legend() {
         <Warning size={12} className="text-warning" /> unassigned time
       </li>
       <li className="inline-flex items-center gap-1">
-        <FlagBanner size={12} className="text-[#5b45c4]" /> open tasks due
+        <FlagBanner size={12} className="text-lavender-ink" /> open tasks due
       </li>
       <li className="inline-flex items-center gap-1">
         <Lock size={12} /> week closed
@@ -383,7 +383,7 @@ function DayPanel({
 
               <section>
                 <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold">
-                  <Clock size={16} /> Attendance sessions
+                  <Clock size={16} /> Attendance Sessions
                 </h3>
                 {data.sessions.length === 0 ? (
                   <p className="text-sm text-ink-soft">None.</p>
@@ -409,7 +409,7 @@ function DayPanel({
 
               <section>
                 <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold">
-                  <ListChecks size={16} /> Tasks worked on
+                  <ListChecks size={16} /> Tasks Worked On
                 </h3>
                 {data.tasks.length === 0 ? (
                   <p className="text-sm text-ink-soft">None.</p>
@@ -450,7 +450,7 @@ function DayPanel({
               {data.entries.length > 0 && (
                 <section>
                   <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold">
-                    <Stack size={16} /> Timers and manual entries
+                    <Stack size={16} /> Timers and Manual Entries
                   </h3>
                   <ul className="flex flex-col gap-1 text-sm">
                     {data.entries.map((e: Json) => (
@@ -473,7 +473,7 @@ function DayPanel({
               {data.events.length > 0 && (
                 <section>
                   <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold">
-                    <Note size={16} /> Other events
+                    <Note size={16} /> Other Events
                   </h3>
                   <ul className="flex flex-col gap-1.5 text-sm">
                     {data.events.map((e: Json) => (
@@ -499,7 +499,7 @@ function DayPanel({
 
           <section className="rounded-[14px] bg-surface-alt/70 p-3">
             <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold">
-              <FlagBanner size={16} /> Due on this day
+              <FlagBanner size={16} /> Due on This Day
             </h3>
             {data.due.length === 0 ? (
               <p className="text-sm text-ink-soft">No deadlines.</p>

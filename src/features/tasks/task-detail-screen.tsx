@@ -47,10 +47,10 @@ export function TaskDetailScreen({ taskId }: { taskId: string }) {
         <Spinner label="Loading task" />
       </div>
     );
-  if (detail.error) return <p className="rounded-[14px] bg-[#fbe8ec] px-4 py-3 text-sm text-danger">{detail.error}</p>;
+  if (detail.error) return <p className="rounded-[14px] bg-danger-tint px-4 py-3 text-sm text-danger">{detail.error}</p>;
   if (!detail.data)
     return (
-      <EmptyState icon={<ListChecks size={24} />} title="Task not found" action={<Link href="/tasks" className="font-medium text-primary-strong">Back to tasks</Link>}>
+      <EmptyState icon={<ListChecks size={24} />} title="Task Not Found" action={<Link href="/tasks" className="font-medium text-primary-strong">Back to tasks</Link>}>
         It may have been removed, or you don&apos;t have access to it.
       </EmptyState>
     );
@@ -104,7 +104,7 @@ function Detail({ data, categories }: { data: TaskDetailData; categories: Catego
           </div>
           {!task.archived_at && (
             <Button size="sm" icon={<PencilSimple size={16} />} onClick={() => setEditing(true)}>
-              Edit details
+              Edit Details
             </Button>
           )}
         </div>
@@ -160,7 +160,7 @@ function Detail({ data, categories }: { data: TaskDetailData; categories: Catego
                 action={
                   canAddSubtask ? (
                     <Button size="sm" icon={<Plus size={16} />} onClick={() => setAddingSub(true)}>
-                      Add subtask
+                      Add Subtask
                     </Button>
                   ) : null
                 }
@@ -213,7 +213,7 @@ function Detail({ data, categories }: { data: TaskDetailData; categories: Catego
           </Card>
 
           <Card>
-            <CardHeader icon={<CalendarBlank size={20} />} title="Deadline history" subtitle="Cairo time" />
+            <CardHeader icon={<CalendarBlank size={20} />} title="Deadline History" subtitle="Cairo time" />
             <div className="px-5 pb-5 text-sm">
               <p>
                 <span className="text-ink-soft">Current:</span> <span className="font-medium">{formatDateTime(task.current_due_at)}</span>
@@ -290,7 +290,7 @@ function DependenciesCard({ data }: { data: TaskDetailData }) {
       <CardHeader icon={<TreeStructure size={20} />} title="Dependencies" subtitle="Warnings only — never blocks work" />
       <div className="flex flex-col gap-4 px-5 pb-5 text-sm">
         <div>
-          <h3 className="mb-2 text-xs font-semibold tracking-wide text-ink-soft uppercase">Depends on</h3>
+          <h3 className="mb-2 text-xs font-semibold tracking-wide text-ink-soft uppercase">Depends On</h3>
           {data.dependsOn.length === 0 ? (
             <p className="text-ink-soft">None.</p>
           ) : (
@@ -315,7 +315,7 @@ function DependenciesCard({ data }: { data: TaskDetailData }) {
         </div>
         {data.blocks.length > 0 && (
           <div>
-            <h3 className="mb-2 text-xs font-semibold tracking-wide text-ink-soft uppercase">Other tasks waiting on this</h3>
+            <h3 className="mb-2 text-xs font-semibold tracking-wide text-ink-soft uppercase">Other Tasks Waiting on This</h3>
             <ul className="flex flex-col gap-1.5">
               {data.blocks.map((d) => (
                 <li key={d.id}>
@@ -362,7 +362,7 @@ function CompletionsCard({ data }: { data: TaskDetailData }) {
   if (completions.length === 0 && scopeCycles.length <= 1 && revisionRounds.length === 0) return null;
   return (
     <Card>
-      <CardHeader icon={<CheckCircle size={20} />} title="Completions and scope" subtitle="First completion counts once in analytics" />
+      <CardHeader icon={<CheckCircle size={20} />} title="Completions and Scope" subtitle="First completion counts once in analytics" />
       <div className="flex flex-col gap-4 px-5 pb-5 text-sm">
         {completions.map((c) => {
           const onTime = c.due_at_at_completion ? Date.parse(c.completed_at) <= Date.parse(c.due_at_at_completion) : null;
@@ -406,7 +406,7 @@ function CompletionsCard({ data }: { data: TaskDetailData }) {
         })}
         {scopeCycles.length > 1 && (
           <div>
-            <h3 className="mb-2 text-xs font-semibold tracking-wide text-ink-soft uppercase">Scope cycles</h3>
+            <h3 className="mb-2 text-xs font-semibold tracking-wide text-ink-soft uppercase">Scope Cycles</h3>
             <ol className="flex flex-col gap-1.5">
               {scopeCycles.map((s) => (
                 <li key={s.id}>
@@ -419,7 +419,7 @@ function CompletionsCard({ data }: { data: TaskDetailData }) {
         )}
         {revisionRounds.length > 0 && (
           <div>
-            <h3 className="mb-2 text-xs font-semibold tracking-wide text-ink-soft uppercase">Revision rounds</h3>
+            <h3 className="mb-2 text-xs font-semibold tracking-wide text-ink-soft uppercase">Revision Rounds</h3>
             <ol className="flex flex-col gap-1.5">
               {revisionRounds.map((r) => (
                 <li key={r.id}>

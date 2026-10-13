@@ -17,7 +17,7 @@ export function SignOutButton({ className }: { className?: string }) {
       }}
     >
       <SignOut size={18} weight="fill" />
-      Sign out
+      Sign Out
     </button>
   );
 }

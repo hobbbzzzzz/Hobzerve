@@ -45,7 +45,7 @@ export function DeliverablesPanel({
         ))}
       </Group>
       {(extra.length > 0 || !compact) && (
-        <Group title="Extra deliverables" empty="Nothing extra yet. Extras are counted by who initiated them.">
+        <Group title="Extra Deliverables" empty="Nothing extra yet. Extras are counted by who initiated them.">
           {extra.map((d) => (
             <DeliverableRow key={d.id} d={d} task={task} evidence={evidence.filter((e) => e.deliverable_id === d.id)} editable={scopeEditable} compact={compact} />
           ))}
@@ -54,14 +54,14 @@ export function DeliverablesPanel({
       {scopeEditable ? (
         <div>
           <Button size="sm" icon={<Plus size={16} />} onClick={() => setAdding(true)}>
-            Add deliverable
+            Add Deliverable
           </Button>
         </div>
       ) : (
         task.status === "completed" && <p className="text-xs text-ink-soft">Scope is locked while the task is completed. Reopen it to change deliverables.</p>
       )}
       {!compact && earlier.length > 0 && (
-        <Group title="Earlier scope cycles" empty="">
+        <Group title="Earlier Scope Cycles" empty="">
           {earlier.map((d) => {
             const cycle = scopeCycles.find((c) => c.id === d.scope_cycle_id);
             return (
@@ -179,7 +179,7 @@ function DeliverableRow({
       {!compact && !d.archived_at && (
         <div className="mt-2 flex flex-wrap gap-1">
           <Button size="sm" variant="ghost" icon={<LinkIcon size={16} />} onClick={() => setAddingEvidence(true)}>
-            Add evidence
+            Add Evidence
           </Button>
           {editable && (
             <>
@@ -226,7 +226,7 @@ function AddDeliverableDialog({ open, onClose, task }: { open: boolean; onClose:
     <Dialog
       open={open}
       onClose={onClose}
-      title="Add deliverable"
+      title="Add Deliverable"
       description={
         task.status === "in_progress" || task.status === "on_hold"
           ? "Adding an expected deliverable during work is recorded as a scope change and notifies the other person."
@@ -286,7 +286,7 @@ function EditDeliverableDialog({ open, onClose, d }: { open: boolean; onClose: (
     <Dialog
       open={open}
       onClose={onClose}
-      title="Edit deliverable"
+      title="Edit Deliverable"
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>
@@ -327,7 +327,7 @@ function EvidenceDialog({ open, onClose, d }: { open: boolean; onClose: () => vo
     <Dialog
       open={open}
       onClose={onClose}
-      title="Add evidence"
+      title="Add Evidence"
       description="A link (document, ticket, file share) and/or a note. File uploads arrive in a later stage."
       footer={
         <>
@@ -347,7 +347,7 @@ function EvidenceDialog({ open, onClose, d }: { open: boolean; onClose: () => vo
               }
             }}
           >
-            Add evidence
+            Add Evidence
           </Button>
         </>
       }

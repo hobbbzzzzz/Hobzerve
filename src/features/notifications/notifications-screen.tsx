@@ -74,17 +74,17 @@ export function NotificationsScreen() {
             ]}
           />
           <Button size="sm" icon={<CheckCircle size={16} />} loading={pending} onClick={() => call("mark_notifications_read", { p_ids: null }, { success: "All marked as read" })}>
-            Mark all read
+            Mark All Read
           </Button>
         </div>
       </div>
 
-      {error && <p className="rounded-[14px] bg-[#fbe8ec] px-4 py-3 text-sm text-danger">{error}</p>}
+      {error && <p className="rounded-[14px] bg-danger-tint px-4 py-3 text-sm text-danger">{error}</p>}
       {!data && loading ? (
         <Spinner />
       ) : rows.length === 0 ? (
         <div className="card">
-          <EmptyState icon={<Bell size={24} />} title={filter === "unread" ? "You're all caught up" : "No notifications yet"}>
+          <EmptyState icon={<Bell size={24} />} title={filter === "unread" ? "You're All Caught Up" : "No Notifications Yet"}>
             Changes the other person makes to your work show up here.
           </EmptyState>
         </div>
@@ -100,7 +100,7 @@ export function NotificationsScreen() {
                     <button
                       type="button"
                       onClick={() => open(item)}
-                      className={clsx("flex w-full items-start gap-3 px-5 py-4 text-left transition-colors hover:bg-surface-alt", unread && "bg-[#f5f7ff]")}
+                      className={clsx("flex w-full items-start gap-3 px-5 py-4 text-left transition-colors hover:bg-surface-alt", unread && "bg-unread")}
                     >
                       <span className={clsx("mt-1.5 size-2.5 shrink-0 rounded-full", unread ? "bg-primary" : "bg-transparent")} aria-hidden />
                       <span className="min-w-0 flex-1">
@@ -129,7 +129,7 @@ export function NotificationsScreen() {
       )}
       {hasMore && (
         <div className="text-center">
-          <Button onClick={() => setLimit((l) => l + PAGE)}>Load older</Button>
+          <Button onClick={() => setLimit((l) => l + PAGE)}>Load Older</Button>
         </div>
       )}
     </div>

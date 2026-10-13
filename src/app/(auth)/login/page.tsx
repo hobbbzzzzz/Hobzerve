@@ -3,7 +3,7 @@ import Image from "next/image";
 import logoMark from "@/assets/logo-mark.png";
 import { LoginForm } from "./login-form";
 
-export const metadata: Metadata = { title: "Sign in" };
+export const metadata: Metadata = { title: "Sign In" };
 
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ next?: string }> }) {
   const { next } = await searchParams;

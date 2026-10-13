@@ -41,7 +41,7 @@ export function TimeSettingsCard() {
 
   return (
     <Card>
-      <CardHeader icon={<Clock size={20} />} title="Hours and overtime" subtitle="Hours only — no pay rates or amounts" />
+      <CardHeader icon={<Clock size={20} />} title="Hours and Overtime" subtitle="Hours only — no pay rates or amounts" />
       <div className="flex flex-col gap-5 px-5 pb-5 text-sm">
         <dl className="grid gap-3 sm:grid-cols-3">
           <div>
@@ -116,7 +116,7 @@ export function TimeSettingsCard() {
                     if (r.ok) history.reload();
                   }}
                 >
-                  Save target
+                  Save Target
                 </Button>
               </div>
             </fieldset>

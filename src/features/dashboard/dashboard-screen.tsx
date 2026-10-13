@@ -62,7 +62,7 @@ export function DashboardScreen() {
         </div>
         <div className="flex gap-2">
           <Button variant="primary" icon={<Plus size={18} />} onClick={() => setCreating(true)}>
-            New task
+            New Task
           </Button>
         </div>
       </div>
@@ -108,7 +108,7 @@ export function DashboardScreen() {
         <Card className="lg:col-span-2">
           <CardHeader
             icon={<Rocket size={22} />}
-            title={isManager ? "Active queue" : "Your active queue"}
+            title={isManager ? "Active Queue" : "Your Active Queue"}
             subtitle={isManager ? "Ranked by you" : "Ranked by your manager"}
             action={
               <Link href="/tasks?view=list" className="inline-flex items-center gap-1 text-sm font-medium text-primary-strong hover:underline">
@@ -121,7 +121,7 @@ export function DashboardScreen() {
               <Spinner />
             ) : active.length === 0 ? (
               <div className="sm:col-span-2">
-                <EmptyState icon={<FlagBanner size={24} />} title="The active queue is empty">
+                <EmptyState icon={<FlagBanner size={24} />} title="The Active Queue Is Empty">
                   {isManager ? "Create a task or ask the employee to promote planned work." : "Move something from Planned when you're ready to work on it."}
                 </EmptyState>
               </div>
@@ -136,7 +136,7 @@ export function DashboardScreen() {
         <Card>
           <CardHeader
             icon={<Bell size={22} />}
-            title={isManager ? "Recent activity" : "Notifications"}
+            title={isManager ? "Recent Activity" : "Notifications"}
             action={
               <Link href="/notifications" className="text-sm font-medium text-primary-strong hover:underline">
                 See all

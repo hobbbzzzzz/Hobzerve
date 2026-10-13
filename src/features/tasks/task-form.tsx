@@ -98,7 +98,7 @@ export function NewTaskDialog({
       open={open}
       onClose={onClose}
       size="lg"
-      title={parent ? `New subtask of "${parent.title}"` : "New task"}
+      title={parent ? `New Subtask of "${parent.title}"` : "New Task"}
       description={
         isManager ? "The employee is notified. They control status and progress." : "Tasks you create are tagged as your initiative. The manager is notified and sets priority."
       }
@@ -109,7 +109,7 @@ export function NewTaskDialog({
           </Button>
           {!parent && (
             <Button disabled={!title.trim() || estimateInvalid} loading={pending} onClick={() => submit(true)}>
-              Create &amp; open
+              Create &amp; Open
             </Button>
           )}
           <Button variant="primary" disabled={!title.trim() || estimateInvalid || (isManager && !assignee)} loading={pending} onClick={() => submit(false)}>
@@ -231,7 +231,7 @@ export function EditTaskDialog({ open, onClose, task, categories }: { open: bool
       open={open}
       onClose={onClose}
       size="lg"
-      title="Edit task details"
+      title="Edit Task Details"
       description="Both of you can edit content. Every change is recorded in the history. Deadline, status and priority have their own controls."
       footer={
         <>

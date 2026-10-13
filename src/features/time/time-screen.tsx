@@ -131,10 +131,10 @@ export function TimeScreen() {
           {canEdit && (
             <>
               <Button icon={<Plus size={18} />} onClick={() => setDialog({ kind: "add" })}>
-                Add past session
+                Add Past Session
               </Button>
               <Button icon={<Clock size={18} />} onClick={() => setDialog({ kind: "manual" })}>
-                Add task time
+                Add Task Time
               </Button>
             </>
           )}
@@ -154,14 +154,14 @@ export function TimeScreen() {
           </IconButton>
           {!isCurrent && (
             <Button size="sm" variant="ghost" onClick={() => go({ week: weekStartOf(cairoToday()) })}>
-              This week
+              This Week
             </Button>
           )}
         </div>
         {s && <WeekStatus s={s} />}
       </div>
 
-      {error && <p className="rounded-[14px] bg-[#fbe8ec] px-4 py-3 text-sm text-danger">{error}</p>}
+      {error && <p className="rounded-[14px] bg-danger-tint px-4 py-3 text-sm text-danger">{error}</p>}
       {!data && loading ? (
         <div className="py-12 text-center">
           <Spinner label="Loading week" />
@@ -228,7 +228,7 @@ function Stat({ label, value, hint, tone }: { label: string; value: React.ReactN
         className={clsx(
           "tabular text-2xl font-bold",
           tone === "primary" && "text-primary-strong",
-          tone === "lavender" && "text-[#5b45c4]",
+          tone === "lavender" && "text-lavender-ink",
           tone === "warning" && "text-warning",
         )}
       >
@@ -265,7 +265,7 @@ function SummaryCards({ s }: { s: WeekSummary }) {
         value={
           <span className="flex flex-col">
             <span>{formatDuration(s.net_regular_seconds)}</span>
-            <span className="text-sm font-semibold text-[#5b45c4]">+ {formatDuration(s.net_overtime_seconds)} overtime</span>
+            <span className="text-sm font-semibold text-lavender-ink">+ {formatDuration(s.net_overtime_seconds)} overtime</span>
           </span>
         }
         hint={s.adjustments_in.length ? `Includes adjustments ${formatDuration(adjReg, { signed: true })} regular, ${formatDuration(adjOt, { signed: true })} OT` : "No adjustments posted here"}
@@ -280,7 +280,7 @@ function AdjustmentsCard({ s }: { s: WeekSummary }) {
       <CardHeader icon={<ArrowCounterClockwise size={20} />} title="Adjustments" subtitle="Corrections to closed weeks are posted to the open week, never rewritten (Decision 109)" />
       <div className="grid gap-4 px-5 pb-5 text-sm md:grid-cols-2">
         <div>
-          <h3 className="mb-2 text-xs font-semibold tracking-wide text-ink-soft uppercase">Posted into this week</h3>
+          <h3 className="mb-2 text-xs font-semibold tracking-wide text-ink-soft uppercase">Posted into This Week</h3>
           {s.adjustments_in.length === 0 ? (
             <p className="text-ink-soft">None.</p>
           ) : (
@@ -298,7 +298,7 @@ function AdjustmentsCard({ s }: { s: WeekSummary }) {
           )}
         </div>
         <div>
-          <h3 className="mb-2 text-xs font-semibold tracking-wide text-ink-soft uppercase">Corrections to this week</h3>
+          <h3 className="mb-2 text-xs font-semibold tracking-wide text-ink-soft uppercase">Corrections to This Week</h3>
           {s.adjustments_out.length === 0 ? (
             <p className="text-ink-soft">None.</p>
           ) : (
@@ -517,7 +517,7 @@ function TaskTimeCard({ data, now, canEdit }: { data: WeekData; now: number; can
 
   return (
     <Card>
-      <CardHeader icon={<Clock size={20} />} title="Task time this week" subtitle="Analysis only — never payable hours" />
+      <CardHeader icon={<Clock size={20} />} title="Task Time This Week" subtitle="Analysis only — never payable hours" />
       <div className="flex flex-col gap-3 px-5 pb-5 text-sm">
         {rows.length === 0 ? (
           <p className="text-ink-soft">No task time recorded.</p>
@@ -537,7 +537,7 @@ function TaskTimeCard({ data, now, canEdit }: { data: WeekData; now: number; can
           </ul>
         )}
         {unassigned > 0 && (
-          <p className="flex items-start gap-2 rounded-[12px] bg-[#fbf0e2] px-3 py-2 text-warning">
+          <p className="flex items-start gap-2 rounded-[12px] bg-warning-tint px-3 py-2 text-warning">
             <Warning size={16} className="mt-0.5 shrink-0" />
             {formatDuration(unassigned)} of attendance is unassigned this week. Re-label it from the day list.
           </p>
@@ -572,7 +572,7 @@ function TaskTimeCard({ data, now, canEdit }: { data: WeekData; now: number; can
       <ReasonDialog
         open={!!removing}
         onClose={() => setRemoving(null)}
-        title="Remove time entry"
+        title="Remove Time Entry"
         description="The entry stays in the history but no longer counts as task time."
         label="Why remove it?"
         confirm="Remove"

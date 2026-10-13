@@ -11,7 +11,7 @@ export default async function WorkspaceLayout({ children }: { children: React.Re
   if (!result.ok) {
     return (
       <main className="mx-auto flex min-h-dvh max-w-md flex-col items-center justify-center gap-3 px-4 text-center">
-        <h1 className="text-xl font-semibold">No active workspace</h1>
+        <h1 className="text-xl font-semibold">No Active Workspace</h1>
         <p className="text-sm text-ink-soft">
           {result.email} is signed in but isn&apos;t an active member of any workspace. Ask the workspace admin to add you.
         </p>

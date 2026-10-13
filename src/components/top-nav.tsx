@@ -9,6 +9,7 @@ import logoMark from "@/assets/logo-mark.png";
 import { useWorkspace } from "./workspace-provider";
 import { useNotificationFeed } from "./notification-feed";
 import { SignOutButton } from "./sign-out-button";
+import { ThemeToggle } from "./theme-toggle";
 import { Bell, CalendarBlank, CaretDown, ChartPieSlice, Clock, Gear, House, ListChecks, UserCircle } from "./icons";
 
 const TABS = [
@@ -26,7 +27,7 @@ export function TopNav() {
   const { unread, syncState, lastSyncedAt } = useNotificationFeed();
 
   return (
-    <header className="sticky top-0 z-30 border-b border-line/80 bg-[rgb(247_249_254/0.85)] backdrop-blur-md">
+    <header className="sticky top-0 z-30 border-b border-line/80 bg-header backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4 sm:px-6">
         <Link href="/dashboard" className="flex shrink-0 items-center gap-2.5" aria-label="Hobzerve home">
           <Image src={logoMark} alt="" className="size-9" priority />
@@ -75,7 +76,7 @@ function NavTab({
       className={clsx(
         "relative inline-flex shrink-0 items-center gap-2 rounded-[12px] px-3 font-medium transition-colors",
         compact ? "h-9 text-[13px]" : "h-10 text-sm",
-        active ? "bg-surface text-primary-strong shadow-[var(--shadow-soft)]" : "text-ink-soft hover:bg-surface/70 hover:text-ink",
+        active ? "bg-primary-gradient text-white shadow-[var(--shadow-button)]" : "text-ink-soft hover:bg-surface hover:text-ink",
       )}
     >
       <Icon size={18} />
@@ -138,13 +139,14 @@ function UserMenu({ name, role, workspace }: { name: string; role: string; works
         <CaretDown size={14} className="text-ink-soft" />
       </button>
       {open && (
-        <div role="menu" className="absolute right-0 mt-2 w-60 rounded-[16px] border border-line bg-surface p-2 shadow-[var(--shadow-lift)]">
+        <div role="menu" className="absolute right-0 mt-2 w-64 rounded-[16px] border border-line bg-surface p-2 shadow-[var(--shadow-lift)]">
           <div className="px-3 py-2">
             <p className="truncate text-sm font-semibold">{name}</p>
             <p className="truncate text-xs text-ink-soft">
               {role === "manager" ? "Manager" : "Employee"} · {workspace}
             </p>
           </div>
+          <ThemeToggle className="mx-1 mb-1" />
           <Link
             role="menuitem"
             href="/settings"

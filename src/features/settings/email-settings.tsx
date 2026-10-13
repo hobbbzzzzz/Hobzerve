@@ -75,7 +75,7 @@ export function EmailSettingsCard() {
         ) : s ? (
           <>
             {!s.configured && (
-              <p className="flex items-start gap-2 rounded-[12px] bg-[#fbf0e2] px-3 py-2 text-warning">
+              <p className="flex items-start gap-2 rounded-[12px] bg-warning-tint px-3 py-2 text-warning">
                 <Warning size={18} className="mt-0.5 shrink-0" />
                 Email isn&apos;t switched on for this workspace yet, so nothing is sent.{" "}
                 {isManager ? "Setup steps are in docs/RUNBOOK.md (Email)." : "Your manager can switch it on."}
@@ -93,7 +93,7 @@ export function EmailSettingsCard() {
                 <label key={key} className="flex items-start gap-3 rounded-[12px] border border-line px-3 py-2.5">
                   <input
                     type="checkbox"
-                    className="mt-1 size-4 accent-[#5566e0]"
+                    className="mt-1 size-4 accent-primary"
                     checked={s.preferences[key]}
                     disabled={pending}
                     onChange={(e) => toggle(key, e.target.checked)}
@@ -132,7 +132,7 @@ export function EmailSettingsCard() {
             )}
 
             <section>
-              <h3 className="mb-2 font-medium">Recent emails to you</h3>
+              <h3 className="mb-2 font-medium">Recent Emails to You</h3>
               {(history.data ?? []).length === 0 ? (
                 <p className="text-ink-soft">None yet.</p>
               ) : (

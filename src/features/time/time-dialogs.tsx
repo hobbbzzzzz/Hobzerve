@@ -42,7 +42,7 @@ function ActivityField({ value, onChange }: { value: ActivityChoice; onChange: (
       <ActivityPicker
         open={open}
         onClose={() => setOpen(false)}
-        title="Choose the activity"
+        title="Choose the Activity"
         onPick={(c) => {
           onChange(c);
           setOpen(false);
@@ -73,7 +73,7 @@ export function SessionDialog({ open, onClose, session }: { open: boolean; onClo
     <Dialog
       open={open}
       onClose={onClose}
-      title={editing ? (wasOpen ? "End this session" : "Correct session times") : "Add a past session"}
+      title={editing ? (wasOpen ? "End This Session" : "Correct Session Times") : "Add a Past Session"}
       description={
         editing
           ? "Corrections are kept in the history. If this week is already closed, the difference is posted as an adjustment to the current week — the closed week itself never changes."
@@ -139,7 +139,7 @@ export function RemoveSessionDialog({ open, onClose, session }: { open: boolean;
     <Dialog
       open={open}
       onClose={onClose}
-      title="Remove session"
+      title="Remove Session"
       description={`${formatTime(session.started_at)}–${formatTime(session.ended_at)}. The session stays in the audit history but no longer counts. Closed weeks get an adjustment instead of changing.`}
       footer={
         <>
@@ -187,7 +187,7 @@ export function RelabelDialog({
     <Dialog
       open={open}
       onClose={onClose}
-      title="Re-label activity"
+      title="Re-Label Activity"
       description={`${activityTitle(segment, tasksById)}, ${formatTime(segment.started_at)}–${segment.ended_at ? formatTime(segment.ended_at) : "now"}. Attendance hours don't change; only what the time counts toward.`}
       footer={
         <>
@@ -223,7 +223,7 @@ export function RelabelDialog({
       <div className="flex flex-col gap-4">
         <ActivityField value={activity ?? { kind: "unassigned", label: "Choose…" }} onChange={setActivity} />
         <label className="flex items-center gap-2 text-sm">
-          <input type="checkbox" className="size-4 accent-[#5566e0]" checked={whole} onChange={(e) => setWhole(e.target.checked)} />
+          <input type="checkbox" className="size-4 accent-primary" checked={whole} onChange={(e) => setWhole(e.target.checked)} />
           The whole block
         </label>
         {!whole && (
@@ -289,7 +289,7 @@ export function ManualTimeDialog({
     <Dialog
       open={open}
       onClose={onClose}
-      title="Add task time"
+      title="Add Task Time"
       description="Task time is for analysis only — payable hours come from attendance."
       footer={
         <>
@@ -298,7 +298,7 @@ export function ManualTimeDialog({
           </Button>
           {overlap ? (
             <Button variant="primary" loading={busy} onClick={() => save(true)}>
-              Keep both
+              Keep Both
             </Button>
           ) : (
             <Button variant="primary" disabled={!valid} loading={busy} onClick={() => save(false)}>
@@ -325,7 +325,7 @@ export function ManualTimeDialog({
         <InstantFields label="End" v={end} />
         <Field label="Note (optional)">{(id) => <Input id={id} value={note} onChange={(e) => setNote(e.target.value)} />}</Field>
         {overlap && (
-          <p role="alert" className="rounded-[14px] bg-[#fbf0e2] px-3 py-2 text-sm text-warning">
+          <p role="alert" className="rounded-[14px] bg-warning-tint px-3 py-2 text-sm text-warning">
             This overlaps task time you already recorded. Keeping both is allowed — reports show the raw total and the de-duplicated total separately.
           </p>
         )}

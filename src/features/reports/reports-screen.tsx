@@ -84,10 +84,10 @@ export function ReportsScreen() {
         )}
         <div className="flex gap-2">
           <Button icon={<ArrowClockwise size={16} />} onClick={list.reload} loading={list.loading && !!list.data}>
-            Re-check changes
+            Re-Check Changes
           </Button>
           <Button variant="primary" icon={<Plus size={18} />} onClick={() => setCreating((x) => !x)} aria-expanded={creating}>
-            New report
+            New Report
           </Button>
         </div>
       </div>
@@ -102,7 +102,7 @@ export function ReportsScreen() {
             <Spinner />
           </div>
         ) : list.data && list.data.rows.length === 0 ? (
-          <EmptyState icon={<FilePdf size={24} />} title="No reports yet">
+          <EmptyState icon={<FilePdf size={24} />} title="No Reports Yet">
             The first weekly report appears after the first weekly close. You can also generate one now.
           </EmptyState>
         ) : (
@@ -286,7 +286,7 @@ function CreateReport({ subject, onDone }: { subject: string; onDone: () => void
       </div>
       <div className="mt-4 flex items-center gap-3">
         <Button variant="primary" icon={<FilePdf size={18} />} loading={pending} disabled={needsTask && !taskId} onClick={submit}>
-          Generate report
+          Generate Report
         </Button>
         <p className="text-xs text-ink-soft">The data is frozen at this moment; it then appears at the top of the list. Filters narrow the task figures, not attendance hours.</p>
       </div>

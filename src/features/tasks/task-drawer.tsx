@@ -18,7 +18,7 @@ import { TaskTimePanel } from "@/features/time/task-time-panel";
 /** Quick side panel for short edits (Decision 64). The full page holds history and everything else. */
 export function TaskDrawer({ taskId, onClose, categories }: { taskId: string | null; onClose: () => void; categories: Category[] }) {
   return (
-    <Drawer open={!!taskId} onClose={onClose} title="Task details" headerExtra={taskId ? <FullPageLink id={taskId} /> : null}>
+    <Drawer open={!!taskId} onClose={onClose} title="Task Details" headerExtra={taskId ? <FullPageLink id={taskId} /> : null}>
       {taskId && <DrawerBody taskId={taskId} categories={categories} />}
     </Drawer>
   );
@@ -92,7 +92,7 @@ function DrawerBody({ taskId, categories }: { taskId: string; categories: Catego
       {task.description && <p className="whitespace-pre-wrap text-sm leading-relaxed text-ink">{task.description}</p>}
 
       {data.dependsOn.some((d) => d.status !== "completed") && (
-        <p className="rounded-[14px] bg-[#fbf0e2] px-3 py-2 text-sm text-warning">
+        <p className="rounded-[14px] bg-warning-tint px-3 py-2 text-sm text-warning">
           Waiting on: {data.dependsOn.filter((d) => d.status !== "completed").map((d) => d.title).join(", ")}. You can still work and complete it.
         </p>
       )}

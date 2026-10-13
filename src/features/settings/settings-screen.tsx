@@ -12,7 +12,8 @@ import { useLoad, useRpc, unwrap } from "@/lib/client/hooks";
 import { getBrowserClient } from "@/lib/supabase/client";
 import { COMPLEXITY_LABEL, DOW_LABEL, PRIORITY_LABEL, PRIORITY_ORDER } from "@/lib/labels";
 import type { Category, PriorityLevel, RecurrenceTemplate, TaskComplexity } from "@/lib/types";
-import { ArchiveBox, ArrowCounterClockwise, Bell, Gear, PencilSimple, Plus, Repeat, Stack } from "@/components/icons";
+import { ArchiveBox, ArrowCounterClockwise, Bell, Gear, PencilSimple, Plus, Repeat, Stack, Moon } from "@/components/icons";
+import { ThemeToggle } from "@/components/theme-toggle";
 import { TimeSettingsCard } from "./time-settings";
 import { EmailSettingsCard } from "./email-settings";
 
@@ -42,6 +43,12 @@ export function SettingsScreen() {
           {isManager ? "Workspace settings and your personal preferences." : "Your personal preferences. Workspace settings are managed by the manager."}
         </p>
       </div>
+      <Card>
+        <CardHeader icon={<Moon size={20} />} title="Appearance" subtitle="Saved on this device. System follows your device's light or dark setting." />
+        <div className="px-5 pb-5">
+          <ThemeToggle className="max-w-sm" />
+        </div>
+      </Card>
       <NotificationPrefs />
       <EmailSettingsCard />
       <TimeSettingsCard />
@@ -75,7 +82,7 @@ function NotificationPrefs() {
   const dirty = JSON.stringify([...muted].sort()) !== JSON.stringify([...(profile.preferences?.muted_event_types ?? [])].sort());
   return (
     <Card>
-      <CardHeader icon={<Bell size={20} />} title="In-app notifications" subtitle="Important notices always arrive, whatever you mute" />
+      <CardHeader icon={<Bell size={20} />} title="In-App Notifications" subtitle="Important notices always arrive, whatever you mute" />
       <div className="px-5 pb-5">
         <ul className="grid gap-2 sm:grid-cols-2">
           {MUTABLE_EVENTS.map(([key, label]) => (
@@ -83,7 +90,7 @@ function NotificationPrefs() {
               <label className="flex items-center gap-3 rounded-[12px] border border-line px-3 py-2.5 text-sm">
                 <input
                   type="checkbox"
-                  className="size-4 accent-[#5566e0]"
+                  className="size-4 accent-primary"
                   checked={!muted.includes(key)}
                   onChange={(e) => setMuted((m) => (e.target.checked ? m.filter((x) => x !== key) : [...m, key]))}
                 />
@@ -107,7 +114,7 @@ function NotificationPrefs() {
                 }
               }}
             >
-              Save preferences
+              Save Preferences
             </Button>
           </div>
         )}
@@ -173,7 +180,7 @@ function RenameCategory({ c, onClose }: { c: Category; onClose: () => void }) {
     <Dialog
       open
       onClose={onClose}
-      title="Rename category"
+      title="Rename Category"
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>
@@ -221,7 +228,7 @@ function RecurringTasks() {
     <Card>
       <CardHeader
         icon={<Repeat size={20} />}
-        title="Recurring tasks"
+        title="Recurring Tasks"
         subtitle="Each occurrence becomes its own task in the Planned queue"
         action={
           <Button size="sm" icon={<Plus size={16} />} onClick={() => setEditing("new")}>
@@ -283,7 +290,7 @@ function TemplateDialog({ template, categories, onClose }: { template: Recurrenc
       open
       onClose={onClose}
       size="lg"
-      title={template ? "Edit recurring task" : "New recurring task"}
+      title={template ? "Edit Recurring Task" : "New Recurring Task"}
       description="Occurrences are generated once per day (Cairo). Editing affects future occurrences only."
       footer={
         <>
@@ -425,7 +432,7 @@ function TemplateDialog({ template, categories, onClose }: { template: Recurrenc
           <Field label="Expected deliverables (one per line)">{(id) => <Textarea id={id} value={deliverables} onChange={(e) => setDeliverables(e.target.value)} />}</Field>
         </div>
         <label className="flex items-center gap-2 text-sm sm:col-span-2">
-          <input type="checkbox" className="size-4 accent-[#5566e0]" checked={enabled} onChange={(e) => setEnabled(e.target.checked)} />
+          <input type="checkbox" className="size-4 accent-primary" checked={enabled} onChange={(e) => setEnabled(e.target.checked)} />
           Generating occurrences
         </label>
       </div>

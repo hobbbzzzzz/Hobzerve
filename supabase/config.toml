@@ -4,7 +4,5 @@ project_id = "hobzerve"
 
 [auth]
 # Decision 93: accounts are seeded; nobody signs up from the app.
-enable_signup = false
-
-[auth.email]
+# Don't also set [auth.email] enable_signup = false: the CLI reads that as "email provider off", which blocks sign-in too.
 enable_signup = false

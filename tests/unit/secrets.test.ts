@@ -4,7 +4,8 @@ import { describe, expect, it } from "vitest";
 
 // A35: no credentials in the repository.
 const root = path.resolve(__dirname, "../..");
-const SKIP = new Set(["node_modules", ".next", ".git", "fonts"]);
+// Local env files are git-ignored (checked below) and hold real keys by design, so they're not repository content.
+const SKIP = new Set(["node_modules", ".next", ".git", "fonts", ".env", ".env.local"]);
 function files(dir: string): string[] {
   return readdirSync(dir).flatMap((f) => {
     if (SKIP.has(f)) return [];
