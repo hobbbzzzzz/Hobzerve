@@ -540,7 +540,7 @@ function Row({
       {draggable && <DotsSixVertical size={18} className="shrink-0 text-ink-soft" aria-hidden />}
       {showRank && <span className="tabular w-7 shrink-0 text-center text-sm font-semibold text-primary-strong">{task.priority_rank ?? "–"}</span>}
       <button type="button" onClick={() => onOpen(task)} className="min-w-0 flex-1 text-left">
-        <p className="truncate font-medium hover:text-primary-strong">{task.title}</p>
+        <p className="truncate font-bold hover:text-primary-strong">{task.title}</p>
         <div className="mt-1 flex flex-wrap gap-1.5">
           {project && <ProjectBadge project={project} />}
           <StatusBadge status={task.status} />

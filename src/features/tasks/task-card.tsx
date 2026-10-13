@@ -44,7 +44,7 @@ export function TaskCard({
             {task.priority_rank}
           </span>
         )}
-        <p className="flex-1 font-medium leading-snug text-ink group-hover:text-primary-strong">{task.title}</p>
+        <p className="flex-1 font-bold leading-snug text-ink group-hover:text-primary-strong">{task.title}</p>
       </div>
       <div className="flex flex-wrap gap-1.5">
         {project && <ProjectBadge project={project} />}
