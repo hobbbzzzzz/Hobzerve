@@ -9,7 +9,8 @@ import { useWorkspace } from "@/components/workspace-provider";
 import { useRpc } from "@/lib/client/hooks";
 import { cairoLocalToIso } from "@/lib/dates";
 import { COMPLEXITY_LABEL, PRIORITY_LABEL, PRIORITY_ORDER, WORK_TYPE_LABEL } from "@/lib/labels";
-import type { Category, PriorityLevel, Task, TaskComplexity, TaskQueue, TaskWorkType } from "@/lib/types";
+import type { Category, PriorityLevel, Project, Task, TaskComplexity, TaskQueue, TaskWorkType } from "@/lib/types";
+import { ProjectBadge, useProjects } from "@/features/projects/projects";
 
 function parseLabels(s: string): string[] {
   return [...new Set(s.split(",").map((x) => x.trim()).filter(Boolean))];
@@ -25,12 +26,14 @@ export function NewTaskDialog({
   categories,
   parent,
   defaultQueue = "planned",
+  defaultProject = null,
 }: {
   open: boolean;
   onClose: () => void;
   categories: Category[];
   parent?: Task;
   defaultQueue?: TaskQueue;
+  defaultProject?: string | null;
 }) {
   const router = useRouter();
   const { workspace, isManager, employees } = useWorkspace();
@@ -39,6 +42,8 @@ export function NewTaskDialog({
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [categoryId, setCategoryId] = useState(parent?.category_id ?? "");
+  const [projectId, setProjectId] = useState(defaultProject ?? "");
+  const { projects } = useProjects();
   const [workType, setWorkType] = useState<TaskWorkType>(parent ? "one_off" : "one_off");
   const [complexity, setComplexity] = useState<TaskComplexity>("moderate");
   const [estimateHours, setEstimateHours] = useState("");
@@ -81,6 +86,7 @@ export function NewTaskDialog({
         p_labels: parseLabels(labels),
         p_expected_deliverables: deliverables.split("\n").map((x) => x.trim()).filter(Boolean),
         p_request_id: requestId,
+        p_project: parent ? null : projectId || null,
       },
       { success: parent ? "Subtask created" : "Task created" },
     );
@@ -125,6 +131,11 @@ export function NewTaskDialog({
         <div className="sm:col-span-2">
           <Field label="Description">{(id) => <Textarea id={id} value={description} onChange={(e) => setDescription(e.target.value)} />}</Field>
         </div>
+        {parent ? (
+          <ParentProjectNote projectId={parent.project_id} projects={projects} />
+        ) : (
+          <ProjectSelect value={projectId} onChange={setProjectId} projects={projects} />
+        )}
         {isManager && !parent && (
           <Field label="Assigned to">
             {(id) => (
@@ -220,6 +231,8 @@ export function EditTaskDialog({ open, onClose, task, categories }: { open: bool
   const [title, setTitle] = useState(task.title);
   const [description, setDescription] = useState(task.description);
   const [categoryId, setCategoryId] = useState(task.category_id ?? "");
+  const [projectId, setProjectId] = useState(task.project_id ?? "");
+  const { projects } = useProjects();
   const [workType, setWorkType] = useState<TaskWorkType>(task.work_type);
   const [complexity, setComplexity] = useState<TaskComplexity>(task.complexity);
   const [estimateHours, setEstimateHours] = useState(task.estimated_minutes ? String(+(task.estimated_minutes / 60).toFixed(2)) : "");
@@ -253,6 +266,7 @@ export function EditTaskDialog({ open, onClose, task, categories }: { open: bool
                     title: title.trim(),
                     description,
                     category_id: categoryId || null,
+                    ...(task.parent_task_id ? {} : { project_id: projectId || null }),
                     work_type: workType,
                     complexity,
                     estimated_minutes: estimate,
@@ -276,6 +290,11 @@ export function EditTaskDialog({ open, onClose, task, categories }: { open: bool
         <div className="sm:col-span-2">
           <Field label="Description">{(id) => <Textarea id={id} rows={6} value={description} onChange={(e) => setDescription(e.target.value)} />}</Field>
         </div>
+        {task.parent_task_id ? (
+          <ParentProjectNote projectId={task.project_id} projects={projects} />
+        ) : (
+          <ProjectSelect value={projectId} onChange={setProjectId} projects={projects} currentId={task.project_id} />
+        )}
         <Field label="Category">
           {(id) => (
             <Select id={id} value={categoryId} onChange={(e) => setCategoryId(e.target.value)}>
@@ -321,5 +340,40 @@ export function EditTaskDialog({ open, onClose, task, categories }: { open: bool
         </div>
       </div>
     </Dialog>
+  );
+}
+
+/** Project picker: an existing project, or none (a general task). Archived projects only show when already chosen. */
+function ProjectSelect({ value, onChange, projects, currentId }: { value: string; onChange: (v: string) => void; projects: Project[]; currentId?: string | null }) {
+  const chosen = projects.find((p) => p.id === value);
+  return (
+    <Field label="Project" hint={chosen ? <ProjectBadge project={chosen} /> : "Not part of a project"}>
+      {(id) => (
+        <Select id={id} value={value} onChange={(e) => onChange(e.target.value)}>
+          <option value="">General Task</option>
+          {projects
+            .filter((p) => !p.archived_at || p.id === currentId)
+            .map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.name}
+                {p.archived_at ? " (archived)" : ""}
+              </option>
+            ))}
+        </Select>
+      )}
+    </Field>
+  );
+}
+
+function ParentProjectNote({ projectId, projects }: { projectId: string | null; projects: Project[] }) {
+  const project = projects.find((p) => p.id === projectId);
+  return (
+    <div className="flex flex-col gap-1.5">
+      <p className="text-sm font-medium text-ink">Project</p>
+      <div className="flex h-11 items-center gap-2 text-sm text-ink-soft">
+        {project ? <ProjectBadge project={project} /> : "General Task"}
+        <span className="text-xs">· follows the parent task</span>
+      </div>
+    </div>
   );
 }

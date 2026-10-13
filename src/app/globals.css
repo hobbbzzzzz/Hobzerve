@@ -227,6 +227,52 @@
   }
 }
 
+/* Project label colours (projects.color). Light and dark pairs each keep label text at ≥4.5:1. */
+@layer components {
+  .project-blue { --project-bg: #dbeafe; --project-ink: #1e40af; --project-dot: #3b82f6; }
+  .project-sky { --project-bg: #e0f2fe; --project-ink: #075985; --project-dot: #0ea5e9; }
+  .project-teal { --project-bg: #ccfbf1; --project-ink: #115e59; --project-dot: #14b8a6; }
+  .project-green { --project-bg: #dcfce7; --project-ink: #166534; --project-dot: #22c55e; }
+  .project-lime { --project-bg: #ecfccb; --project-ink: #3f6212; --project-dot: #84cc16; }
+  .project-amber { --project-bg: #fef3c7; --project-ink: #92400e; --project-dot: #f59e0b; }
+  .project-orange { --project-bg: #ffedd5; --project-ink: #9a3412; --project-dot: #f97316; }
+  .project-red { --project-bg: #fee2e2; --project-ink: #991b1b; --project-dot: #ef4444; }
+  .project-pink { --project-bg: #fce7f3; --project-ink: #9d174d; --project-dot: #ec4899; }
+  .project-purple { --project-bg: #f3e8ff; --project-ink: #6b21a8; --project-dot: #a855f7; }
+  .project-violet { --project-bg: #ede9fe; --project-ink: #5b21b6; --project-dot: #8b5cf6; }
+  .project-slate { --project-bg: #e2e8f0; --project-ink: #1e293b; --project-dot: #64748b; }
+}
+:root[data-theme="dark"] {
+  .project-blue { --project-bg: #172554; --project-ink: #bfdbfe; }
+  .project-sky { --project-bg: #082f49; --project-ink: #bae6fd; }
+  .project-teal { --project-bg: #042f2e; --project-ink: #99f6e4; }
+  .project-green { --project-bg: #052e16; --project-ink: #bbf7d0; }
+  .project-lime { --project-bg: #1a2e05; --project-ink: #d9f99d; }
+  .project-amber { --project-bg: #451a03; --project-ink: #fde68a; }
+  .project-orange { --project-bg: #431407; --project-ink: #fed7aa; }
+  .project-red { --project-bg: #450a0a; --project-ink: #fecaca; }
+  .project-pink { --project-bg: #500724; --project-ink: #fbcfe8; }
+  .project-purple { --project-bg: #3b0764; --project-ink: #e9d5ff; }
+  .project-violet { --project-bg: #2e1065; --project-ink: #ddd6fe; }
+  .project-slate { --project-bg: #1e293b; --project-ink: #e2e8f0; }
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    .project-blue { --project-bg: #172554; --project-ink: #bfdbfe; }
+    .project-sky { --project-bg: #082f49; --project-ink: #bae6fd; }
+    .project-teal { --project-bg: #042f2e; --project-ink: #99f6e4; }
+    .project-green { --project-bg: #052e16; --project-ink: #bbf7d0; }
+    .project-lime { --project-bg: #1a2e05; --project-ink: #d9f99d; }
+    .project-amber { --project-bg: #451a03; --project-ink: #fde68a; }
+    .project-orange { --project-bg: #431407; --project-ink: #fed7aa; }
+    .project-red { --project-bg: #450a0a; --project-ink: #fecaca; }
+    .project-pink { --project-bg: #500724; --project-ink: #fbcfe8; }
+    .project-purple { --project-bg: #3b0764; --project-ink: #e9d5ff; }
+    .project-violet { --project-bg: #2e1065; --project-ink: #ddd6fe; }
+    .project-slate { --project-bg: #1e293b; --project-ink: #e2e8f0; }
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

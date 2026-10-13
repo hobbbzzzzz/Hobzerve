@@ -32,6 +32,7 @@ import { ProgressControl, TaskActionBar } from "./task-actions";
 import { DeliverablesPanel } from "./deliverables-panel";
 import { EditTaskDialog, NewTaskDialog } from "./task-form";
 import { TaskTimePanel } from "@/features/time/task-time-panel";
+import { ProjectBadge, useProjects } from "@/features/projects/projects";
 
 export function TaskDetailScreen({ taskId }: { taskId: string }) {
   const { workspace } = useWorkspace();
@@ -59,12 +60,14 @@ export function TaskDetailScreen({ taskId }: { taskId: string }) {
 }
 
 function Detail({ data, categories }: { data: TaskDetailData; categories: Category[] }) {
+  const { projects } = useProjects();
   const { nameOf } = useWorkspace();
   const { task, parent, subtasks } = data;
   const [editing, setEditing] = useState(false);
   const [addingSub, setAddingSub] = useState(false);
   const locked = parent?.status === "completed";
   const category = categories.find((c) => c.id === task.category_id);
+  const project = projects.find((p) => p.id === task.project_id);
   const suggested = suggestedProgress(subtasks);
   const canAddSubtask = !task.parent_task_id && !task.archived_at && task.status !== "completed" && task.status !== "cancelled";
 
@@ -91,6 +94,7 @@ function Detail({ data, categories }: { data: TaskDetailData; categories: Catego
           <div className="min-w-0 flex-1">
             <h1 className="text-2xl leading-tight font-semibold">{task.title}</h1>
             <div className="mt-2 flex flex-wrap gap-1.5">
+              {project && <ProjectBadge project={project} />}
               <StatusBadge status={task.status} />
               <PriorityBadge level={task.priority_level} />
               <DueBadge task={task} />
@@ -202,6 +206,7 @@ function Detail({ data, categories }: { data: TaskDetailData; categories: Catego
                 {task.queue === "active" ? "Active" : "Planned"}
                 {task.priority_rank ? ` · #${task.priority_rank}` : ""}
               </Info>
+              <Info label="Project">{project?.name ?? "General Task"}</Info>
               <Info label="Category">{category?.name ?? "—"}</Info>
               <Info label="Work type">{WORK_TYPE_LABEL[task.work_type]}</Info>
               <Info label="Complexity">{COMPLEXITY_LABEL[task.complexity]}</Info>

@@ -14,6 +14,7 @@ import type { AuditEvent, Notification, Task } from "@/lib/types";
 import { Bell, CalendarBlank, CaretRight, FlagBanner, Plus, Rocket } from "@/components/icons";
 import { loadBoard } from "@/features/tasks/data";
 import { TaskCard } from "@/features/tasks/task-card";
+import { useProjects } from "@/features/projects/projects";
 import { TaskDrawer } from "@/features/tasks/task-drawer";
 import { NewTaskDialog } from "@/features/tasks/task-form";
 import { DueBadge } from "@/features/tasks/badges";
@@ -47,6 +48,8 @@ export function DashboardScreen() {
   const overdue = deadlines.filter((t) => Date.parse(t.current_due_at!) < Date.now());
   const categories = board.data?.categories ?? [];
   const catById = new Map(categories.map((c) => [c.id, c]));
+  const { projects } = useProjects();
+  const projectById = new Map(projects.map((p) => [p.id, p]));
   const greeting = greet();
 
   return (
@@ -57,7 +60,7 @@ export function DashboardScreen() {
             <CalendarBlank size={14} /> {formatDate(new Date().toISOString())} · Cairo · open calendar
           </Link>
           <h1 className="text-2xl font-semibold">
-            {greeting}, {profile.display_name.split(" ")[0]}
+            {greeting}, {profile.nickname ?? profile.display_name.split(" ")[0]}
           </h1>
         </div>
         <div className="flex gap-2">
@@ -127,7 +130,7 @@ export function DashboardScreen() {
               </div>
             ) : (
               active.slice(0, 6).map((t: Task) => (
-                <TaskCard key={t.id} task={t} category={t.category_id ? catById.get(t.category_id) : undefined} onOpen={(x) => setOpenTask(x.id)} showStatus />
+                <TaskCard key={t.id} task={t} category={t.category_id ? catById.get(t.category_id) : undefined} project={t.project_id ? projectById.get(t.project_id) : undefined} onOpen={(x) => setOpenTask(x.id)} showStatus />
               ))
             )}
           </div>

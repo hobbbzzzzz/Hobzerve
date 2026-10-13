@@ -18,6 +18,7 @@ import { PRIORITY_LABEL, PRIORITY_ORDER, STATUS_LABEL, WORK_TYPE_LABEL } from "@
 import type { Category, TaskStatus, TaskWorkType } from "@/lib/types";
 import { ArrowCounterClockwise, CalendarBlank, CheckCircle, Clock, FlagBanner, ListChecks, Sparkle, Stack, Warning } from "@/components/icons";
 import { AnalyticsNav } from "./analytics-nav";
+import { useProjects } from "@/features/projects/projects";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 type Json = any;
@@ -55,8 +56,9 @@ export function AnalyticsScreen() {
   const subject = isManager ? (params.get("user") ?? employees[0]?.user_id ?? null) : userId;
   const preset = (params.get("period") as Preset) || "this_month";
   const { from, to } = periodFor(preset, params.get("from"), params.get("to"));
-  const filters = Object.fromEntries(["category_id", "work_type", "priority"].flatMap((k) => (params.get(k) ? [[k, params.get(k)!]] : [])));
+  const filters = Object.fromEntries(["category_id", "project_id", "work_type", "priority"].flatMap((k) => (params.get(k) ? [[k, params.get(k)!]] : [])));
   const [drill, setDrill] = useState<null | { title: string; body: ReactNode }>(null);
+  const { projects } = useProjects();
 
   const cats = useLoad(
     async () => unwrap(await getBrowserClient().from("categories").select("*").eq("workspace_id", workspace.id).order("sort_order").returns<Category[]>()) ?? [],
@@ -126,6 +128,18 @@ export function AnalyticsScreen() {
             {(cats.data ?? []).map((c) => (
               <option key={c.id} value={c.id}>
                 {c.name}
+              </option>
+            ))}
+          </Select>
+        </Labeled>
+        <Labeled label="Project">
+          <Select className="h-10 w-44" value={filters.project_id ?? ""} onChange={(e) => go({ project_id: e.target.value || null })}>
+            <option value="">All projects</option>
+            <option value="none">General tasks</option>
+            {projects.map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.name}
+                {p.archived_at ? " (archived)" : ""}
               </option>
             ))}
           </Select>
