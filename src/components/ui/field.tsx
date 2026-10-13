@@ -4,7 +4,7 @@ import clsx from "clsx";
 import { useId, type InputHTMLAttributes, type ReactNode, type SelectHTMLAttributes, type TextareaHTMLAttributes } from "react";
 
 const control =
-  "rounded-[12px] border border-line bg-surface px-3 text-sm text-ink placeholder:text-ink-soft/70 transition-shadow focus:border-primary focus:outline-none focus:ring-4 focus:ring-[rgb(102_118_232/0.15)] disabled:bg-surface-alt disabled:text-ink-soft";
+  "rounded-[12px] border border-line bg-surface px-3 text-sm text-ink placeholder:text-ink-soft/70 transition-shadow focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/15 disabled:bg-surface-alt disabled:text-ink-soft";
 
 export function Field({ label, hint, error, children, id }: { label: string; hint?: ReactNode; error?: string; children: (id: string) => ReactNode; id?: string }) {
   const auto = useId();

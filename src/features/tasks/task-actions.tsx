@@ -70,7 +70,7 @@ export function TaskActionBar({
   return (
     <>
       {locked && (
-        <p className="mb-3 flex items-start gap-2 rounded-[14px] bg-[#fbf0e2] px-3 py-2 text-sm text-warning">
+        <p className="mb-3 flex items-start gap-2 rounded-[14px] bg-warning-tint px-3 py-2 text-sm text-warning">
           <Lock size={18} className="mt-0.5 shrink-0" />
           The parent task is completed. Work on this subtask resumes only after the employee reopens the parent.
         </p>
@@ -85,7 +85,7 @@ export function TaskActionBar({
             )}
             {task.status === "in_progress" && (
               <Button size="sm" icon={<PauseCircle size={16} />} onClick={() => setDialog("hold")}>
-                Put on hold
+                Put on Hold
               </Button>
             )}
             {task.status === "on_hold" && (
@@ -126,7 +126,7 @@ export function TaskActionBar({
             )}
             {isOpenStatus(task.status) && (
               <Button size="sm" variant="ghost" icon={<Prohibit size={16} />} onClick={() => setDialog("cancel")}>
-                Cancel task
+                Cancel Task
               </Button>
             )}
           </>
@@ -134,7 +134,7 @@ export function TaskActionBar({
 
         {task.status !== "completed" && (
           <Button size="sm" icon={<CalendarBlank size={16} />} onClick={() => setDialog("deadline")}>
-            {task.current_due_at ? "Change deadline" : "Set deadline"}
+            {task.current_due_at ? "Change Deadline" : "Set Deadline"}
           </Button>
         )}
 
@@ -142,7 +142,7 @@ export function TaskActionBar({
 
         {(isManager || isAssignee) && (
           <Button size="sm" variant="ghost" icon={<HandPalm size={16} />} onClick={() => setDialog("request")}>
-            {isManager ? "Request…" : "Propose priority"}
+            {isManager ? "Request…" : "Propose Priority"}
           </Button>
         )}
 
@@ -154,7 +154,7 @@ export function TaskActionBar({
       <ReasonDialog
         open={dialog === "hold"}
         onClose={() => setDialog(null)}
-        title="Put task on hold"
+        title="Put Task on Hold"
         description="Progress freezes while on hold and the hold duration is logged. The deadline does not move."
         label="Why is it on hold?"
         confirm="Put on hold"
@@ -163,7 +163,7 @@ export function TaskActionBar({
       <ReasonDialog
         open={dialog === "cancel"}
         onClose={() => setDialog(null)}
-        title="Cancel task"
+        title="Cancel Task"
         description="Cancelled tasks keep their full history and can be reactivated later."
         label="Why is it being cancelled?"
         confirm="Cancel task"
@@ -173,7 +173,7 @@ export function TaskActionBar({
       <ReasonDialog
         open={dialog === "archive"}
         onClose={() => setDialog(null)}
-        title="Archive task"
+        title="Archive Task"
         description="Archived tasks disappear from boards but stay in history and can be restored."
         label="Reason (optional)"
         optional
@@ -285,7 +285,7 @@ function DeadlineDialog({ open, onClose, task }: { open: boolean; onClose: () =>
     <Dialog
       open={open}
       onClose={onClose}
-      title={task.current_due_at ? "Change deadline" : "Set deadline"}
+      title={task.current_due_at ? "Change Deadline" : "Set Deadline"}
       description={
         <>
           Times are Cairo time. Current: <span className="font-medium text-ink">{formatDateTime(task.current_due_at)}</span>. Every change is kept in
@@ -318,7 +318,7 @@ function DeadlineDialog({ open, onClose, task }: { open: boolean; onClose: () =>
               }
             }}
           >
-            Save deadline
+            Save Deadline
           </Button>
         </>
       }
@@ -330,7 +330,7 @@ function DeadlineDialog({ open, onClose, task }: { open: boolean; onClose: () =>
         </div>
         {task.current_due_at && (
           <label className="flex items-center gap-2 text-sm">
-            <input type="checkbox" className="size-4 accent-[#5566e0]" checked={clear} onChange={(e) => setClear(e.target.checked)} />
+            <input type="checkbox" className="size-4 accent-primary" checked={clear} onChange={(e) => setClear(e.target.checked)} />
             Remove the deadline
           </label>
         )}
@@ -370,7 +370,7 @@ function CompleteDialog({
       open={open}
       onClose={onClose}
       size="lg"
-      title="Complete task"
+      title="Complete Task"
       description="Completion is immediate — no manager approval. A snapshot of deliverables is saved and can't be edited later."
       footer={
         <>
@@ -397,14 +397,14 @@ function CompleteDialog({
               if (r.ok) onClose();
             }}
           >
-            Complete now
+            Complete Now
           </Button>
         </>
       }
     >
       <div className="flex flex-col gap-5">
         <section>
-          <h3 className="mb-2 text-sm font-semibold">Expected deliverables</h3>
+          <h3 className="mb-2 text-sm font-semibold">Expected Deliverables</h3>
           {deliverables.filter((d) => d.kind === "expected" && !d.archived_at && d.scope_cycle_id === task.current_scope_cycle_id).length === 0 ? (
             <p className="text-sm text-ink-soft">No expected deliverables in the current scope.</p>
           ) : (
@@ -439,7 +439,7 @@ function CompleteDialog({
         {openSubs.length > 0 && (
           <section>
             <h3 className="mb-2 flex items-center gap-2 text-sm font-semibold">
-              <Stack size={16} /> Unfinished subtasks
+              <Stack size={16} /> Unfinished Subtasks
             </h3>
             <p className="mb-2 text-xs text-ink-soft">
               After completion these subtasks stay paused until you reopen this task.
@@ -472,7 +472,7 @@ function ReopenDialog({ open, onClose, task }: { open: boolean; onClose: () => v
     <Dialog
       open={open}
       onClose={onClose}
-      title="Reopen task"
+      title="Reopen Task"
       description="The original completion still counts once. Reopening unlocks the deadline and subtasks."
       footer={
         <>
@@ -509,7 +509,7 @@ function ReopenDialog({ open, onClose, task }: { open: boolean; onClose: () => v
           ] as const
         ).map(([value, title, hint]) => (
           <label key={value} className="flex cursor-pointer items-start gap-3 rounded-[14px] border border-line p-3 has-[:checked]:border-primary has-[:checked]:bg-surface-alt">
-            <input type="radio" name="reopen-mode" className="mt-1 size-4 accent-[#5566e0]" checked={mode === value} onChange={() => setMode(value)} />
+            <input type="radio" name="reopen-mode" className="mt-1 size-4 accent-primary" checked={mode === value} onChange={() => setMode(value)} />
             <span>
               <span className="block text-sm font-medium">{title}</span>
               <span className="block text-xs text-ink-soft">{hint}</span>
@@ -538,7 +538,7 @@ function RequestDialog({ open, onClose, task }: { open: boolean; onClose: () => 
     <Dialog
       open={open}
       onClose={onClose}
-      title={isManager ? "Send a request" : "Propose a priority change"}
+      title={isManager ? "Send a Request" : "Propose a Priority Change"}
       description={
         isManager
           ? "Requests notify the employee. They don't change the task — the employee stays in control of its status."
@@ -623,7 +623,7 @@ export function ProgressControl({ task, locked }: { task: Task; locked?: boolean
         value={value}
         disabled={!canEdit || pending}
         onChange={(e) => setValue(Number(e.target.value))}
-        className="h-2 w-full cursor-pointer accent-[#5566e0] disabled:cursor-not-allowed"
+        className="h-2 w-full cursor-pointer accent-primary disabled:cursor-not-allowed"
       />
       {hint && <p className="text-xs text-ink-soft">{hint}</p>}
       {canEdit && value !== task.manual_progress && (
@@ -634,7 +634,7 @@ export function ProgressControl({ task, locked }: { task: Task; locked?: boolean
             loading={pending}
             onClick={() => call("set_progress", { p_task: task.id, p_expected_version: task.record_version, p_progress: value }, { success: "Progress saved" })}
           >
-            Save progress
+            Save Progress
           </Button>
           <Button size="sm" variant="ghost" onClick={() => setValue(task.manual_progress)}>
             Reset

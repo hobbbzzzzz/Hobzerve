@@ -26,7 +26,7 @@ export function LoginForm({ next }: { next: string }) {
   }
 
   const input =
-    "h-11 w-full rounded-[12px] border border-line bg-surface px-3 text-sm focus:border-primary focus:outline-none focus:ring-4 focus:ring-[rgb(102_118_232/0.15)]";
+    "h-11 w-full rounded-[12px] border border-line bg-surface px-3 text-sm focus:border-primary focus:outline-none focus:ring-4 focus:ring-primary/15";
 
   return (
     <form onSubmit={onSubmit} className="flex flex-col gap-4" noValidate>
@@ -51,16 +51,16 @@ export function LoginForm({ next }: { next: string }) {
         />
       </div>
       {error && (
-        <p role="alert" className="rounded-[12px] bg-[#fbe8ec] px-3 py-2 text-sm text-danger">
+        <p role="alert" className="rounded-[12px] bg-danger-tint px-3 py-2 text-sm text-danger">
           {error}
         </p>
       )}
       <button
         type="submit"
         disabled={pending || !email || !password}
-        className="mt-1 h-11 rounded-[14px] bg-primary-gradient text-sm font-semibold text-white shadow-[0_6px_18px_rgb(85_102_224/0.28)] disabled:opacity-55"
+        className="mt-1 h-11 rounded-[14px] bg-primary-gradient text-sm font-semibold text-white shadow-[var(--shadow-button)] disabled:opacity-55"
       >
-        {pending ? "Signing in…" : "Sign in"}
+        {pending ? "Signing in…" : "Sign In"}
       </button>
     </form>
   );

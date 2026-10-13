@@ -2,7 +2,7 @@ import clsx from "clsx";
 import type { HTMLAttributes, ReactNode } from "react";
 
 export function Card({ className, ...rest }: HTMLAttributes<HTMLDivElement>) {
-  return <div className={clsx("card", className)} {...rest} />;
+  return <div className={clsx("card card-accent", className)} {...rest} />;
 }
 
 export function CardHeader({ icon, title, action, subtitle }: { icon?: ReactNode; title: ReactNode; subtitle?: ReactNode; action?: ReactNode }) {
@@ -10,7 +10,7 @@ export function CardHeader({ icon, title, action, subtitle }: { icon?: ReactNode
     <div className="flex items-start justify-between gap-3 px-5 pt-5 pb-3">
       <div className="flex min-w-0 items-center gap-3">
         {icon && (
-          <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-surface-alt text-primary-strong" aria-hidden>
+          <span className="inline-flex size-10 shrink-0 items-center justify-center rounded-full bg-primary-gradient text-white shadow-[var(--shadow-button)]" aria-hidden>
             {icon}
           </span>
         )}

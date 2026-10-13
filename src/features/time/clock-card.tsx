@@ -85,13 +85,13 @@ export function ClockCard() {
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="flex items-center gap-3">
             <span
-              className={`inline-flex size-11 items-center justify-center rounded-full ${session ? "bg-primary-gradient text-white" : "bg-surface-alt text-primary-strong"}`}
+              className={`inline-flex size-11 items-center justify-center rounded-full ${session ? "bg-primary-gradient text-white" : "bg-tint-gradient text-primary-strong"}`}
               aria-hidden
             >
               <Clock size={22} />
             </span>
             <div>
-              <h2 className="text-base font-semibold">{session ? "Clocked in" : "Clocked out"}</h2>
+              <h2 className="text-base font-semibold">{session ? "Clocked In" : "Clocked Out"}</h2>
               <p className="text-sm text-ink-soft">
                 {!state && live.loading ? "Loading…" : session ? `Since ${formatTime(session.started_at)}` : "Not recording attendance"}
               </p>
@@ -128,13 +128,13 @@ export function ClockCard() {
         )}
 
         {session && segment?.kind === "unassigned" && (
-          <p className="flex items-start gap-2 rounded-[14px] bg-[#fbf0e2] px-3 py-2 text-sm text-warning" role="status">
+          <p className="flex items-start gap-2 rounded-[14px] bg-warning-tint px-3 py-2 text-sm text-warning" role="status">
             <Warning size={18} className="mt-0.5 shrink-0" />
             This time is unassigned. It counts as attendance but not as task time — switch to what you&apos;re doing, or re-label it later in Time.
           </p>
         )}
         {forgot && (
-          <p className="flex items-start gap-2 rounded-[14px] bg-[#fbe8ec] px-3 py-2 text-sm text-danger" role="alert">
+          <p className="flex items-start gap-2 rounded-[14px] bg-danger-tint px-3 py-2 text-sm text-danger" role="alert">
             <Warning size={18} className="mt-0.5 shrink-0" />
             You&apos;ve been clocked in for over {FORGOT_AFTER_HOURS} hours. If you forgot to clock out, clock out now and correct the end time in Time.
           </p>
@@ -143,15 +143,15 @@ export function ClockCard() {
         <div className="flex flex-wrap gap-2">
           {!session ? (
             <Button variant="primary" icon={<PlayCircle size={18} />} loading={pending} disabled={!state} onClick={() => setPicker("clock_in")}>
-              Clock in
+              Clock In
             </Button>
           ) : (
             <>
               <Button variant="primary" icon={<ArrowsDownUp size={18} />} loading={pending} onClick={() => setPicker("switch")}>
-                Switch activity
+                Switch Activity
               </Button>
               <Button icon={<SignOut size={18} />} onClick={() => setRecap(true)}>
-                Clock out
+                Clock Out
               </Button>
             </>
           )}
@@ -188,7 +188,7 @@ export function ClockCard() {
         open={picker !== null}
         onClose={() => setPicker(null)}
         onPick={pick}
-        title={picker === "clock_in" ? "Clock in — what are you starting with?" : "Switch activity"}
+        title={picker === "clock_in" ? "Clock In — What Are You Starting With?" : "Switch Activity"}
         current={segment ? { kind: segment.kind, taskId: segment.task_id, generalType: segment.general_type } : null}
       />
       {session && (
@@ -256,12 +256,12 @@ function ClockOutDialog({
     <Dialog
       open={open}
       onClose={onClose}
-      title="Clock out"
+      title="Clock Out"
       description="Your current activity ends at the same moment. A running task timer keeps going until you stop it."
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>
-            Keep working
+            Keep Working
           </Button>
           <Button
             variant="primary"
@@ -276,7 +276,7 @@ function ClockOutDialog({
               }
             }}
           >
-            Clock out now
+            Clock Out Now
           </Button>
         </>
       }

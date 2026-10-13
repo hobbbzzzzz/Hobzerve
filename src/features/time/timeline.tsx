@@ -9,7 +9,7 @@ import { activityTitle } from "./live";
 const KIND_STYLE: Record<ActivitySegment["kind"], string> = {
   task: "bg-primary-gradient",
   general: "bg-teal",
-  unassigned: "bg-[repeating-linear-gradient(135deg,#f3dcc0_0_6px,#fbf0e2_6px_12px)] border border-[#e8c79c]",
+  unassigned: "bg-[repeating-linear-gradient(135deg,var(--color-warning-edge)_0_6px,var(--color-warning-tint)_6px_12px)] border border-warning-edge",
 };
 
 /**

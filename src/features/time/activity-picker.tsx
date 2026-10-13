@@ -82,7 +82,7 @@ export function ActivityPicker({
           <Spinner />
         ) : (
           <>
-            <Section title="Active queue">
+            <Section title="Active Queue">
               {groups.active.length === 0 && <Empty>No active tasks.</Empty>}
               {groups.active.map((t) => (
                 <Option
@@ -97,7 +97,7 @@ export function ActivityPicker({
               ))}
             </Section>
             {groups.planned.length > 0 && (
-              <Section title="Planned (you'll see a warning)">
+              <Section title="Planned (You'll See a Warning)">
                 {groups.planned.map((t) => (
                   <Option
                     key={t.id}
@@ -110,12 +110,12 @@ export function ActivityPicker({
                 ))}
               </Section>
             )}
-            <Section title="General activity">
+            <Section title="General Activity">
               {groups.general.map((g) => (
                 <Option key={g} icon={<Note size={18} />} label={g} current={isCurrent("general", null, g)} onClick={() => onPick({ kind: "general", generalType: g, label: g })} />
               ))}
             </Section>
-            <Section title="Not sure yet">
+            <Section title="Not Sure Yet">
               <Option
                 icon={<CircleDashed size={18} />}
                 label="Unassigned"

@@ -5,12 +5,12 @@ export type Tone = "neutral" | "primary" | "success" | "warning" | "danger" | "l
 
 const tones: Record<Tone, string> = {
   neutral: "bg-surface-alt text-ink-soft",
-  primary: "bg-[#e9ecff] text-primary-strong",
-  success: "bg-[#e3f4ee] text-success",
-  warning: "bg-[#fbf0e2] text-warning",
-  danger: "bg-[#fbe8ec] text-danger",
-  lavender: "bg-[#f0ebff] text-[#5b45c4]",
-  teal: "bg-[#e2f5f3] text-[#1d7570]",
+  primary: "bg-primary-tint text-primary-strong",
+  success: "bg-success-tint text-success",
+  warning: "bg-warning-tint text-warning",
+  danger: "bg-danger-tint text-danger",
+  lavender: "bg-lavender-tint text-lavender-ink",
+  teal: "bg-teal-tint text-teal-ink",
 };
 
 export function Badge({ tone = "neutral", icon, children, className }: { tone?: Tone; icon?: ReactNode; children: ReactNode; className?: string }) {

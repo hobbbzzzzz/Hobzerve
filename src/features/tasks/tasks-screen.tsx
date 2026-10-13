@@ -127,7 +127,7 @@ export function TasksScreen() {
             ]}
           />
           <Button variant="primary" icon={<Plus size={18} />} onClick={() => setCreating(true)}>
-            New task
+            New Task
           </Button>
         </div>
       </div>
@@ -193,7 +193,7 @@ export function TasksScreen() {
             ))}
           </Select>
           <label className="flex h-11 items-center gap-2 rounded-[12px] border border-line px-3 text-sm">
-            <input type="checkbox" className="size-4 accent-[#5566e0]" checked={filters.archived} onChange={(e) => set("archived", e.target.checked)} />
+            <input type="checkbox" className="size-4 accent-primary" checked={filters.archived} onChange={(e) => set("archived", e.target.checked)} />
             Archived
           </label>
         </div>
@@ -205,13 +205,13 @@ export function TasksScreen() {
               className="font-medium text-primary-strong hover:underline"
               onClick={() => setFilters((f) => ({ ...f, queue: "all", category: "", status: "any", priority: "", deadline: "any", origin: "any", creator: "" }))}
             >
-              Clear filters
+              Clear Filters
             </button>
           </div>
         )}
       </div>
 
-      {error && <p className="rounded-[14px] bg-[#fbe8ec] px-4 py-3 text-sm text-danger">{error}</p>}
+      {error && <p className="rounded-[14px] bg-danger-tint px-4 py-3 text-sm text-danger">{error}</p>}
       {!data && loading ? (
         <div className="py-10 text-center">
           <Spinner label="Loading tasks" />
@@ -229,7 +229,7 @@ export function TasksScreen() {
       )}
 
       {!!data && data.tasks.filter((t) => !t.parent_task_id).length === 0 && !filters.archived && (
-        <EmptyState icon={<Tray size={24} />} title="No tasks yet" action={<Button variant="primary" icon={<Plus size={18} />} onClick={() => setCreating(true)}>Create the first task</Button>}>
+        <EmptyState icon={<Tray size={24} />} title="No Tasks Yet" action={<Button variant="primary" icon={<Plus size={18} />} onClick={() => setCreating(true)}>Create the First Task</Button>}>
           {isManager ? "Create a task and assign it to the employee." : "Create a task for yourself — it's tagged as your initiative."}
         </EmptyState>
       )}
@@ -370,7 +370,7 @@ function QueueSection({
     <section className="card overflow-hidden">
       <header className="flex flex-wrap items-center justify-between gap-2 border-b border-line px-5 py-4">
         <div>
-          <h2 className="text-base font-semibold">{queue === "active" ? "Active queue" : "Planned queue"}</h2>
+          <h2 className="text-base font-semibold">{queue === "active" ? "Active Queue" : "Planned Queue"}</h2>
           <p className="text-xs text-ink-soft">
             {isManager
               ? canReorder

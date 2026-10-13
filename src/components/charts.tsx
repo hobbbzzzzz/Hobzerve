@@ -5,11 +5,14 @@ import clsx from "clsx";
 
 // Small, dependency-free SVG charts following the data-viz method: one axis per chart, thin marks with 4px rounded
 // data-ends, hairline recessive grid, legend for ≥2 series plus direct end labels, hover tooltips on every mark, and a
-// table view so nothing depends on color or hover alone. Palette slots validated (light): #2a78d6, #eb6834.
+// table view so nothing depends on color or hover alone. Palette slots 1–2 of the validated reference palette, with
+// separate light and dark steps defined as theme tokens in globals.css (--color-series-*, --color-chart-*).
 
-export const SERIES = ["#2a78d6", "#eb6834"] as const;
-const GRID = "#e9edf5";
-const TEXT_SOFT = "#5b677a";
+export const SERIES = ["var(--color-series-1)", "var(--color-series-2)"] as const;
+const GRID = "var(--color-chart-grid)";
+const TEXT_SOFT = "var(--color-chart-text)";
+const CURSOR = "var(--color-chart-cursor)";
+const SURFACE = "var(--color-surface)";
 
 export interface Point {
   label: string;
@@ -52,7 +55,7 @@ export function ChartCard({
           {subtitle && <p className="text-xs text-ink-soft">{subtitle}</p>}
         </figcaption>
         <button type="button" onClick={() => setAsTable((x) => !x)} className="shrink-0 text-xs font-medium text-primary-strong hover:underline" aria-pressed={asTable}>
-          {asTable ? "Show chart" : "Show table"}
+          {asTable ? "Show Chart" : "Show Table"}
         </button>
       </div>
       {legend && legend.length > 1 && !asTable && (
@@ -99,10 +102,25 @@ const W = 320;
 const H = 160;
 const PAD = { l: 34, r: 12, t: 10, b: 22 };
 
-/** Single-series column chart. */
-export function ColumnChart({ points, format, ariaLabel }: { points: Point[]; format: (v: number) => string; ariaLabel: string }) {
+/** Single-series column chart. Optional per-column reference marks (e.g. a prorated weekly target) in the same unit. */
+export function ColumnChart({
+  points,
+  format,
+  ariaLabel,
+  reference,
+  width = W,
+}: {
+  points: Point[];
+  format: (v: number) => string;
+  ariaLabel: string;
+  reference?: { name: string; values: Array<number | null> };
+  /** viewBox width: wider for full-width cards so text keeps its size. */
+  width?: number;
+}) {
+  const W = width;
   const [hover, setHover] = useState<number | null>(null);
-  const max = niceMax(Math.max(0, ...points.map((p) => p.value ?? 0)));
+  const gid = useId().replace(/:/g, "");
+  const max = niceMax(Math.max(0, ...points.map((p) => p.value ?? 0), ...(reference?.values ?? []).map((v) => v ?? 0)));
   const iw = W - PAD.l - PAD.r;
   const ih = H - PAD.t - PAD.b;
   const band = iw / Math.max(1, points.length);
@@ -111,10 +129,17 @@ export function ColumnChart({ points, format, ariaLabel }: { points: Point[]; fo
   return (
     <div className="relative">
       <svg viewBox={`0 0 ${W} ${H}`} className="w-full" role="img" aria-label={ariaLabel} onMouseLeave={() => setHover(null)}>
+        <defs>
+          {/* One hue, deeper at the base: the gradient keeps the series identity. */}
+          <linearGradient id={`col-${gid}`} x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" style={{ stopColor: SERIES[0], stopOpacity: 0.7 }} />
+            <stop offset="1" style={{ stopColor: SERIES[0], stopOpacity: 1 }} />
+          </linearGradient>
+        </defs>
         {[0, 0.5, 1].map((f) => (
           <g key={f}>
-            <line x1={PAD.l} x2={W - PAD.r} y1={y(max * f)} y2={y(max * f)} stroke={GRID} strokeWidth={1} />
-            <text x={PAD.l - 6} y={y(max * f) + 3} textAnchor="end" fontSize={9} fill={TEXT_SOFT}>
+            <line x1={PAD.l} x2={W - PAD.r} y1={y(max * f)} y2={y(max * f)} style={{ stroke: GRID }} strokeWidth={1} />
+            <text x={PAD.l - 6} y={y(max * f) + 3} textAnchor="end" fontSize={9} style={{ fill: TEXT_SOFT }}>
               {format(max * f)}
             </text>
           </g>
@@ -125,16 +150,20 @@ export function ColumnChart({ points, format, ariaLabel }: { points: Point[]; fo
           const top = y(v);
           const h = PAD.t + ih - top;
           const r = Math.min(4, h, bw / 2);
+          const ref = reference?.values[i];
           return (
             <g key={p.label}>
               {h > 0 && (
                 <path
                   d={`M${cx - bw / 2},${PAD.t + ih} V${top + r} Q${cx - bw / 2},${top} ${cx - bw / 2 + r},${top} H${cx + bw / 2 - r} Q${cx + bw / 2},${top} ${cx + bw / 2},${top + r} V${PAD.t + ih} Z`}
-                  fill={SERIES[0]}
+                  fill={`url(#col-${gid})`}
                   opacity={hover == null || hover === i ? 1 : 0.55}
                 />
               )}
-              <text x={cx} y={H - 6} textAnchor="middle" fontSize={9} fill={TEXT_SOFT}>
+              {ref != null && (
+                <line x1={cx - bw / 2 - 4} x2={cx + bw / 2 + 4} y1={y(ref)} y2={y(ref)} style={{ stroke: "var(--color-ink)" }} strokeWidth={2} strokeDasharray="3 2" strokeLinecap="round" />
+              )}
+              <text x={cx} y={H - 6} textAnchor="middle" fontSize={9} style={{ fill: TEXT_SOFT }}>
                 {p.label}
               </text>
               <rect x={PAD.l + band * i} y={PAD.t} width={band} height={ih} fill="transparent" onMouseEnter={() => setHover(i)} onFocus={() => setHover(i)} />
@@ -143,8 +172,43 @@ export function ColumnChart({ points, format, ariaLabel }: { points: Point[]; fo
         })}
       </svg>
       {hover != null && (
-        <Tooltip x={(PAD.l + band * hover + band / 2) / W} title={points[hover]!.label} rows={[{ name: "", value: points[hover]!.value == null ? "—" : format(points[hover]!.value!) }]} />
+        <Tooltip
+          x={(PAD.l + band * hover + band / 2) / W}
+          title={points[hover]!.label}
+          rows={[
+            { name: reference ? "Value" : "", color: reference ? SERIES[0] : undefined, value: points[hover]!.value == null ? "—" : format(points[hover]!.value!) },
+            ...(reference ? [{ name: reference.name, value: reference.values[hover] == null ? "—" : format(reference.values[hover]!) }] : []),
+          ]}
+        />
       )}
+    </div>
+  );
+}
+
+/** Horizontal bars for a ranked breakdown (categories, work types). Value labels sit at the end of each bar. */
+export function BarList({ rows, format, ariaLabel }: { rows: Array<{ label: string; value: number }>; format: (v: number) => string; ariaLabel: string }) {
+  const [hover, setHover] = useState<number | null>(null);
+  const max = Math.max(0, ...rows.map((r) => r.value));
+  return (
+    <div className="flex flex-col gap-2.5" role="img" aria-label={ariaLabel} onMouseLeave={() => setHover(null)}>
+      {rows.map((r, i) => (
+        <div key={r.label} className="grid grid-cols-[minmax(0,9rem)_1fr_auto] items-center gap-3 text-xs" onMouseEnter={() => setHover(i)}>
+          <span className="truncate text-ink-soft" title={r.label}>
+            {r.label}
+          </span>
+          <span className="h-2.5 rounded-full bg-surface-alt">
+            <span
+              className="block h-full rounded-full transition-opacity"
+              style={{
+                width: `${max > 0 ? Math.max(r.value > 0 ? 2 : 0, (r.value / max) * 100) : 0}%`,
+                backgroundImage: `linear-gradient(90deg, color-mix(in oklab, ${SERIES[0]} 65%, transparent), ${SERIES[0]})`,
+                opacity: hover == null || hover === i ? 1 : 0.55,
+              }}
+            />
+          </span>
+          <span className="tabular font-medium text-ink">{format(r.value)}</span>
+        </div>
+      ))}
     </div>
   );
 }
@@ -164,18 +228,18 @@ export function LineChart({ series, format, ariaLabel, fixedMax }: { series: Ser
       <svg viewBox={`0 0 ${W} ${H}`} className="w-full" role="img" aria-label={ariaLabel} onMouseLeave={() => setHover(null)}>
         {[0, 0.5, 1].map((f) => (
           <g key={f}>
-            <line x1={PAD.l} x2={PAD.l + iw} y1={y(max * f)} y2={y(max * f)} stroke={GRID} strokeWidth={1} />
-            <text x={PAD.l - 6} y={y(max * f) + 3} textAnchor="end" fontSize={9} fill={TEXT_SOFT}>
+            <line x1={PAD.l} x2={PAD.l + iw} y1={y(max * f)} y2={y(max * f)} style={{ stroke: GRID }} strokeWidth={1} />
+            <text x={PAD.l - 6} y={y(max * f) + 3} textAnchor="end" fontSize={9} style={{ fill: TEXT_SOFT }}>
               {format(max * f)}
             </text>
           </g>
         ))}
         {labels.map((l, i) => (
-          <text key={l} x={x(i)} y={H - 6} textAnchor="middle" fontSize={9} fill={TEXT_SOFT}>
+          <text key={l} x={x(i)} y={H - 6} textAnchor="middle" fontSize={9} style={{ fill: TEXT_SOFT }}>
             {l}
           </text>
         ))}
-        {hover != null && <line x1={x(hover)} x2={x(hover)} y1={PAD.t} y2={PAD.t + ih} stroke="#c9d1e0" strokeWidth={1} />}
+        {hover != null && <line x1={x(hover)} x2={x(hover)} y1={PAD.t} y2={PAD.t + ih} style={{ stroke: CURSOR }} strokeWidth={1} />}
         {series.map((s, si) => {
           // Gaps where a month has no value (nothing eligible) instead of drawing through zero.
           const segs: string[] = [];
@@ -191,15 +255,15 @@ export function LineChart({ series, format, ariaLabel, fixedMax }: { series: Ser
           return (
             <g key={s.name} aria-hidden>
               {segs.map((d, k) => (
-                <path key={`${id}-${si}-${k}`} d={d} fill="none" stroke={SERIES[si]} strokeWidth={2} strokeLinejoin="round" strokeLinecap="round" />
+                <path key={`${id}-${si}-${k}`} d={d} fill="none" style={{ stroke: SERIES[si] }} strokeWidth={2} strokeLinejoin="round" strokeLinecap="round" />
               ))}
               {s.points.map((p, i) =>
                 p.value == null ? null : (
-                  <circle key={i} cx={x(i)} cy={y(p.value)} r={hover === i ? 5 : 4} fill={SERIES[si]} stroke="#ffffff" strokeWidth={2} />
+                  <circle key={i} cx={x(i)} cy={y(p.value)} r={hover === i ? 5 : 4} style={{ fill: SERIES[si], stroke: SURFACE }} strokeWidth={2} />
                 ),
               )}
               {lastIdx >= 0 && (
-                <text x={x(lastIdx) + 8} y={y(s.points[lastIdx]!.value!) + 3 + (si === 1 ? 9 : 0)} fontSize={9} fill={TEXT_SOFT}>
+                <text x={x(lastIdx) + 8} y={y(s.points[lastIdx]!.value!) + 3 + (si === 1 ? 9 : 0)} fontSize={9} style={{ fill: TEXT_SOFT }}>
                   {format(s.points[lastIdx]!.value!)}
                 </text>
               )}

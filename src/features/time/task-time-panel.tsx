@@ -80,7 +80,7 @@ export function TaskTimePanel({ task, subtasks, locked }: { task: Task; subtasks
                 timer.reload();
               }}
             >
-              Stop timer
+              Stop Timer
             </Button>
           ) : (
             <Button
@@ -94,11 +94,11 @@ export function TaskTimePanel({ task, subtasks, locked }: { task: Task; subtasks
                 timer.reload();
               }}
             >
-              Start timer
+              Start Timer
             </Button>
           )}
           <Button size="sm" variant="ghost" icon={<Plus size={16} />} onClick={() => setAdding(true)}>
-            Add time
+            Add Time
           </Button>
         </div>
       )}

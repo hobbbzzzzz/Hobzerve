@@ -144,8 +144,8 @@ export function RecordsScreen() {
           options={[
             { value: "attendance", label: "Attendance" },
             { value: "activity", label: "Activity" },
-            { value: "time", label: "Task time" },
-            { value: "audit", label: "Audit log" },
+            { value: "time", label: "Task Time" },
+            { value: "audit", label: "Audit Log" },
           ]}
         />
         {isManager && employees.length > 0 && (
@@ -169,7 +169,7 @@ export function RecordsScreen() {
           <Input aria-label="Search audit summaries" placeholder="Search summaries" className="h-10 w-56" value={search} onChange={(e) => { setSearch(e.target.value); setPage(0); }} />
         ) : (
           <label className="flex h-10 items-center gap-2 text-sm">
-            <input type="checkbox" className="size-4 accent-[#5566e0]" checked={removed} onChange={(e) => { setRemoved(e.target.checked); setPage(0); }} />
+            <input type="checkbox" className="size-4 accent-primary" checked={removed} onChange={(e) => { setRemoved(e.target.checked); setPage(0); }} />
             Include removed/replaced
           </label>
         )}

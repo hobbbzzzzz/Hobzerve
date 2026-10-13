@@ -14,7 +14,7 @@ export function EmptyState({ icon, title, children, action }: { icon?: ReactNode
   return (
     <div className="flex flex-col items-center justify-center gap-3 px-6 py-10 text-center">
       {icon && (
-        <span className="inline-flex size-12 items-center justify-center rounded-full bg-surface-alt text-primary-strong" aria-hidden>
+        <span className="inline-flex size-12 items-center justify-center rounded-full bg-tint-gradient text-primary-strong" aria-hidden>
           {icon}
         </span>
       )}
@@ -66,7 +66,7 @@ export function Segmented<T extends string>({
           onClick={() => onChange(o.value)}
           className={clsx(
             "inline-flex h-8 items-center gap-1.5 rounded-[10px] px-3 text-sm font-medium transition-colors",
-            value === o.value ? "bg-surface-alt text-primary-strong" : "text-ink-soft hover:text-ink",
+            value === o.value ? "bg-primary-gradient text-white shadow-[var(--shadow-button)]" : "text-ink-soft hover:text-ink",
           )}
         >
           {o.icon}

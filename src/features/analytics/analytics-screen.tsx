@@ -9,7 +9,7 @@ import { Card, CardHeader } from "@/components/ui/card";
 import { Dialog } from "@/components/ui/dialog";
 import { Input, Select } from "@/components/ui/field";
 import { Spinner } from "@/components/ui/misc";
-import { ChartCard, ColumnChart, LineChart, SERIES } from "@/components/charts";
+import { BarList, ChartCard, ColumnChart, LineChart, SERIES } from "@/components/charts";
 import { useWorkspace } from "@/components/workspace-provider";
 import { useLoad, unwrap } from "@/lib/client/hooks";
 import { getBrowserClient } from "@/lib/supabase/client";
@@ -156,7 +156,7 @@ export function AnalyticsScreen() {
         </p>
       </div>
 
-      {a.error && <p className="rounded-[14px] bg-[#fbe8ec] px-4 py-3 text-sm text-danger">{a.error}</p>}
+      {a.error && <p className="rounded-[14px] bg-danger-tint px-4 py-3 text-sm text-danger">{a.error}</p>}
       {!k && a.loading ? (
         <div className="py-16 text-center">
           <Spinner label="Calculating" />
@@ -165,27 +165,28 @@ export function AnalyticsScreen() {
         <>
           <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-5">
             <Tile
-              icon={<CheckCircle size={18} />}
+              icon={<CheckCircle size={14} />}
               label="Completed"
               value={String(k.throughput.value)}
               hint={`${k.throughput.subtasks} subtasks counted separately`}
               onOpen={() => setDrill({ title: "Completed (first completions)", body: <Drill rule={k.throughput.rule} items={k.throughput.items} cols={throughputCols} /> })}
             />
             <Tile
-              icon={<ListChecks size={18} />}
-              label="Worked on"
+              icon={<ListChecks size={14} />}
+              label="Worked On"
               value={String(k.worked_on.value)}
               hint={`${k.worked_on.subtasks} subtasks counted separately`}
-              onOpen={() => setDrill({ title: "Worked on", body: <Drill rule={k.worked_on.rule} items={k.worked_on.items} cols={[{ h: "Task", f: taskLink }, { h: "Category", f: (i) => i.category ?? "—" }]} /> })}
+              onOpen={() => setDrill({ title: "Worked On", body: <Drill rule={k.worked_on.rule} items={k.worked_on.items} cols={[{ h: "Task", f: taskLink }, { h: "Category", f: (i) => i.category ?? "—" }]} /> })}
             />
             <Tile
-              icon={<FlagBanner size={18} />}
-              label="Due-task completion"
+              icon={<FlagBanner size={14} />}
+              label="Due-Task Completion"
               value={pct(k.due_completion.value)}
+              meter={k.due_completion.value}
               hint={`${k.due_completion.numerator} of ${k.due_completion.denominator} due · ${k.due_completion.not_yet_due} not yet due`}
               onOpen={() =>
                 setDrill({
-                  title: "Due-task completion",
+                  title: "Due-Task Completion",
                   body: (
                     <Drill
                       rule={k.due_completion.rule}
@@ -204,13 +205,14 @@ export function AnalyticsScreen() {
               }
             />
             <Tile
-              icon={<Stack size={18} />}
-              label="Deliverables fulfilled"
+              icon={<Stack size={14} />}
+              label="Deliverables Fulfilled"
               value={pct(k.deliverable_fulfillment.value)}
+              meter={k.deliverable_fulfillment.value}
               hint={`${k.deliverable_fulfillment.numerator} of ${k.deliverable_fulfillment.denominator} expected`}
               onOpen={() =>
                 setDrill({
-                  title: "Expected deliverables fulfilled",
+                  title: "Expected Deliverables Fulfilled",
                   body: (
                     <Drill
                       rule={k.deliverable_fulfillment.rule}
@@ -227,13 +229,13 @@ export function AnalyticsScreen() {
               }
             />
             <Tile
-              icon={<Sparkle size={18} />}
-              label="Own initiative"
+              icon={<Sparkle size={14} />}
+              label="Own Initiative"
               value={String(k.proactive.created)}
               hint={`${k.proactive.completed} completed · ${k.extras.self_initiated} self-initiated extras`}
               onOpen={() =>
                 setDrill({
-                  title: "Own initiative and extra deliverables",
+                  title: "Own Initiative and Extra Deliverables",
                   body: (
                     <>
                       <Drill rule={k.proactive.rule} items={k.proactive.items} cols={[{ h: "Task", f: taskLink }, { h: "Created", f: (i) => formatDateTime(i.created_at) }, { h: "Status", f: (i) => STATUS_LABEL[i.status as TaskStatus] }]} />
@@ -260,27 +262,27 @@ export function AnalyticsScreen() {
 
           <div className="grid gap-3 md:grid-cols-3">
             <Tile
-              icon={<Clock size={18} />}
-              label="Overtime (weeks ending in period)"
+              icon={<Clock size={14} />}
+              label="Overtime (Weeks Ending in Period)"
               value={formatDuration(k.attendance.overtime_seconds)}
               hint={k.attendance.final ? "All weeks closed" : "Includes provisional weeks"}
-              onOpen={() => setDrill({ title: "Overtime by week", body: <WeeksTable k={k} /> })}
+              onOpen={() => setDrill({ title: "Overtime by Week", body: <WeeksTable k={k} /> })}
             />
             <Tile
-              icon={<Warning size={18} />}
-              label="Unassigned attendance"
+              icon={<Warning size={14} />}
+              label="Unassigned Attendance"
               value={formatDuration(k.attendance.unassigned_seconds)}
               hint={`of ${formatDuration(k.attendance.closed_seconds)} closed attendance`}
               tone={k.attendance.unassigned_seconds > 0 ? "warning" : undefined}
             />
             <Tile
-              icon={<ArrowCounterClockwise size={18} />}
-              label="Reopened · deadline changes"
+              icon={<ArrowCounterClockwise size={14} />}
+              label="Reopened · Deadline Changes"
               value={`${k.reopens.revision + k.reopens.additional_scope} · ${k.deadline_changes.count}`}
               hint={`${k.reopens.revision} revision, ${k.reopens.additional_scope} additional scope`}
               onOpen={() =>
                 setDrill({
-                  title: "Reopens and deadline changes",
+                  title: "Reopens and Deadline Changes",
                   body: (
                     <>
                       <Drill
@@ -292,7 +294,7 @@ export function AnalyticsScreen() {
                           { h: "Reason", f: (i) => i.reason },
                         ]}
                       />
-                      <h3 className="mt-5 mb-2 text-sm font-semibold">Deadline changes</h3>
+                      <h3 className="mt-5 mb-2 text-sm font-semibold">Deadline Changes</h3>
                       <DeadlineTable items={k.deadline_changes.items} rule={k.deadline_changes.rule} />
                     </>
                   ),
@@ -301,16 +303,18 @@ export function AnalyticsScreen() {
             />
           </div>
 
+          <WeeklyHours k={k} />
+
           <Trends trend={a.data.trend} />
 
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-2 [&>*]:min-w-0">
-            <Breakdown title="By category" rows={k.by_category} first={(r) => r.name} rule={k.breakdown_rule} />
-            <Breakdown title="By work type" rows={k.by_work_type} first={(r) => WORK_TYPE_LABEL[r.work_type as TaskWorkType] ?? r.work_type} rule={k.breakdown_rule} />
+            <Breakdown title="By Category" rows={k.by_category} first={(r) => r.name} rule={k.breakdown_rule} />
+            <Breakdown title="By Work Type" rows={k.by_work_type} first={(r) => WORK_TYPE_LABEL[r.work_type as TaskWorkType] ?? r.work_type} rule={k.breakdown_rule} />
           </div>
 
           {k.deadline_changes.items.length > 0 && (
             <Card>
-              <CardHeader icon={<CalendarBlank size={20} />} title="Deadline changes and reasons" subtitle={`${k.deadline_changes.count} in this period`} />
+              <CardHeader icon={<CalendarBlank size={20} />} title="Deadline Changes and Reasons" subtitle={`${k.deadline_changes.count} in this period`} />
               <div className="overflow-x-auto px-5 pb-5">
                 <DeadlineTable items={k.deadline_changes.items} />
               </div>
@@ -335,24 +339,47 @@ function Labeled({ label, children }: { label: string; children: ReactNode }) {
   );
 }
 
-function Tile({ icon, label, value, hint, onOpen, tone }: { icon: ReactNode; label: string; value: string; hint?: string; onOpen?: () => void; tone?: "warning" }) {
+function Tile({
+  icon,
+  label,
+  value,
+  hint,
+  onOpen,
+  tone,
+  meter,
+}: {
+  icon: ReactNode;
+  label: string;
+  value: string;
+  hint?: string;
+  onOpen?: () => void;
+  tone?: "warning";
+  meter?: number | null;
+}) {
   const body = (
     <>
       <span className="flex items-center gap-2 text-xs font-medium text-ink-soft">
-        <span className="text-primary-strong">{icon}</span>
+        <span className="inline-flex size-7 items-center justify-center rounded-full bg-primary-gradient text-white" aria-hidden>
+          {icon}
+        </span>
         {label}
       </span>
       <span className={clsx("tabular text-3xl font-semibold", tone === "warning" ? "text-warning" : "text-ink")}>{value}</span>
+      {meter != null && (
+        <span className="h-1.5 w-full overflow-hidden rounded-full bg-surface-alt" aria-hidden>
+          <span className="block h-full rounded-full bg-soft-gradient" style={{ width: `${Math.round(Math.min(1, Math.max(0, Number(meter))) * 100)}%` }} />
+        </span>
+      )}
       {hint && <span className="text-xs text-ink-soft">{hint}</span>}
     </>
   );
   return onOpen ? (
-    <button type="button" onClick={onOpen} className="card flex flex-col items-start gap-1 p-4 text-left transition-shadow hover:shadow-[var(--shadow-lift)]">
+    <button type="button" onClick={onOpen} className="card card-accent flex flex-col items-start gap-1 p-4 text-left transition-shadow hover:shadow-[var(--shadow-lift)]">
       {body}
-      <span className="mt-1 text-xs font-medium text-primary-strong">See details</span>
+      <span className="mt-1 text-xs font-medium text-primary-strong">See Details</span>
     </button>
   ) : (
-    <div className="card flex flex-col items-start gap-1 p-4">{body}</div>
+    <div className="card card-accent flex flex-col items-start gap-1 p-4">{body}</div>
   );
 }
 
@@ -426,12 +453,12 @@ function OnTimeCard({ k, onDrill }: { k: Json; onDrill: (d: { title: string; bod
   ];
   return (
     <Card>
-      <CardHeader icon={<CheckCircle size={20} />} title="On time — two views, always shown together" subtitle="Decision 108: the deadline is locked while a task is completed" />
+      <CardHeader icon={<CheckCircle size={20} />} title="On Time — Two Views, Always Shown Together" subtitle="Decision 108: the deadline is locked while a task is completed" />
       <div className="grid gap-4 px-5 pb-5 md:grid-cols-2">
-        <button type="button" onClick={() => onDrill({ title: "On time at completion", body: <Drill rule={at.rule} ratio={[at.numerator, at.denominator]} items={at.items} cols={cols} /> })} className="flex flex-col items-start gap-1 rounded-[16px] border border-line p-4 text-left hover:bg-surface-alt">
+        <button type="button" onClick={() => onDrill({ title: "On Time at Completion", body: <Drill rule={at.rule} ratio={[at.numerator, at.denominator]} items={at.items} cols={cols} /> })} className="flex flex-col items-start gap-1 rounded-[16px] border border-line p-4 text-left hover:bg-surface-alt">
           <span className="flex items-center gap-2 text-xs font-medium text-ink-soft">
             <span className="inline-block size-2.5 rounded-full" style={{ background: SERIES[0] }} aria-hidden />
-            On time at completion
+            On Time at Completion
           </span>
           <span className="tabular text-3xl font-semibold">{pct(at.value)}</span>
           <span className="text-xs text-ink-soft">{at.denominator ? `${at.numerator} of ${at.denominator} with a deadline` : "No completed task had a deadline"} · never changes later</span>
@@ -439,7 +466,7 @@ function OnTimeCard({ k, onDrill }: { k: Json; onDrill: (d: { title: string; bod
         <button type="button" onClick={() => onDrill({ title: "On time (restated)", body: <Drill rule={re.rule} ratio={[re.numerator, re.denominator]} items={re.items} cols={cols} /> })} className="flex flex-col items-start gap-1 rounded-[16px] border border-line p-4 text-left hover:bg-surface-alt">
           <span className="flex items-center gap-2 text-xs font-medium text-ink-soft">
             <span className="inline-block size-2.5 rounded-full" style={{ background: SERIES[1] }} aria-hidden />
-            On time (restated)
+            On Time (Restated)
             <Badge tone="warning">Restated</Badge>
           </span>
           <span className="tabular text-3xl font-semibold">{pct(re.value)}</span>
@@ -476,13 +503,13 @@ function Trends({ trend }: { trend: Json[] }) {
   const labels = trend.map((t) => monthShort(t.month));
   return (
     <section className="flex flex-col gap-3">
-      <h2 className="text-base font-semibold">Last six months</h2>
+      <h2 className="text-base font-semibold">Last Six Months</h2>
       <div className="grid gap-4 md:grid-cols-3">
-        <ChartCard title="Completed tasks" subtitle="First completions per month" table={{ headers: ["Month", "Completed", "Worked on"], rows: trend.map((t, i) => [labels[i]!, String(t.throughput), String(t.worked_on)]) }}>
+        <ChartCard title="Completed Tasks" subtitle="First completions per month" table={{ headers: ["Month", "Completed", "Worked on"], rows: trend.map((t, i) => [labels[i]!, String(t.throughput), String(t.worked_on)]) }}>
           <ColumnChart ariaLabel="Completed tasks per month" points={trend.map((t, i) => ({ label: labels[i]!, value: t.throughput }))} format={(v) => String(Math.round(v))} />
         </ChartCard>
         <ChartCard
-          title="On time"
+          title="On Time"
           subtitle="At completion vs restated, % of tasks with a deadline"
           legend={[
             { name: "At completion", color: SERIES[0] },
@@ -508,6 +535,40 @@ function Trends({ trend }: { trend: Json[] }) {
   );
 }
 
+function WeeklyHours({ k }: { k: Json }) {
+  const weeks: Json[] = k.attendance.weeks;
+  if (weeks.length === 0) return null;
+  const label = (w: Json) => formatDayLabel(w.week_start).replace(/^\w+,?\s*/, "");
+  const h = (sec: number) => sec / 3600;
+  return (
+    <ChartCard
+      title="Hours by Week"
+      subtitle="Closed attendance per Saturday–Friday week, against that week's prorated target"
+      legend={[
+        { name: "Closed hours", color: SERIES[0] },
+        { name: "Target", color: "var(--color-ink)" },
+      ]}
+      table={{
+        headers: ["Week of", "Closed", "Target", "Overtime"],
+        rows: weeks.map((w) => [formatDayLabel(w.week_start), formatDuration(w.closed_seconds), formatDuration(w.target_seconds), formatDuration(w.overtime_seconds)]),
+      }}
+    >
+      {/* Wide viewBox on desktop so the text keeps its size; the standard one on phones. */}
+      {[960, undefined].map((width) => (
+        <div key={width ?? "narrow"} className={width ? "hidden md:block" : "md:hidden"}>
+          <ColumnChart
+            ariaLabel="Closed attendance hours per week against the weekly target"
+            points={weeks.map((w) => ({ label: label(w), value: h(w.closed_seconds) }))}
+            reference={{ name: "Target", values: weeks.map((w) => h(w.target_seconds)) }}
+            format={(v) => `${Math.round(v * 10) / 10}h`}
+            width={width}
+          />
+        </div>
+      ))}
+    </ChartCard>
+  );
+}
+
 function Breakdown({ title, rows, first, rule }: { title: string; rows: Json[]; first: (r: Json) => string; rule: string }) {
   return (
     <Card>
@@ -516,7 +577,14 @@ function Breakdown({ title, rows, first, rule }: { title: string; rows: Json[]; 
         {rows.length === 0 ? (
           <p className="text-sm text-ink-soft">No activity in this period.</p>
         ) : (
-          <table className="w-full text-sm">
+          <>
+          <p className="mb-2 text-xs font-medium text-ink-soft">Tracked hours</p>
+          <BarList
+            ariaLabel={`Tracked hours ${title.toLowerCase()}`}
+            rows={[...rows].sort((x, y) => y.tracked_seconds - x.tracked_seconds).map((r) => ({ label: first(r), value: r.tracked_seconds / 3600 }))}
+            format={(v) => `${Math.round(v * 10) / 10}h`}
+          />
+          <table className="mt-5 w-full min-w-[30rem] text-sm">
             <thead>
               <tr className="text-left text-xs text-ink-soft">
                 <th className="pb-1.5 font-medium">Name</th>
@@ -538,6 +606,7 @@ function Breakdown({ title, rows, first, rule }: { title: string; rows: Json[]; 
               ))}
             </tbody>
           </table>
+          </>
         )}
         <p className="mt-2 text-xs text-ink-soft">{rule}</p>
       </div>

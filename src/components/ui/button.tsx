@@ -14,10 +14,10 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 const variants: Record<Variant, string> = {
-  primary: "bg-primary-gradient text-white shadow-[0_6px_18px_rgb(85_102_224/0.28)] hover:brightness-105",
+  primary: "bg-primary-gradient text-white shadow-[var(--shadow-button)] hover:brightness-105",
   secondary: "bg-surface text-ink border border-line hover:bg-surface-alt",
   ghost: "text-ink-soft hover:text-ink hover:bg-surface-alt",
-  danger: "bg-danger text-white hover:brightness-105",
+  danger: "bg-danger-solid text-white hover:brightness-105",
 };
 
 const sizes: Record<Size, string> = {

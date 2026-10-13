@@ -1,17 +1,18 @@
 @import "tailwindcss";
 
-/* Hobzerve design tokens (DESIGN_SYSTEM.md — hex values are PROPOSED defaults). */
+/* Hobzerve design tokens (DESIGN_SYSTEM.md — hex values are PROPOSED defaults).
+   Light values live in @theme; dark values override the same variables below, so every utility follows the theme. */
 @theme {
   --font-sans: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
 
-  --color-bg: #f7f9fe;
+  --color-bg: #f6f8fe;
   --color-surface: #ffffff;
-  --color-surface-alt: #f1f5ff;
-  --color-ink: #182338;
-  --color-ink-soft: #556175;
-  --color-line: #e5eaf4;
-  --color-primary: #6676e8;
-  --color-primary-strong: #4d5ccf;
+  --color-surface-alt: #f0f4ff;
+  --color-ink: #162036;
+  --color-ink-soft: #536079;
+  --color-line: #e3e9f5;
+  --color-primary: #4f6ef7;
+  --color-primary-strong: #2f4fd6;
   --color-blue-soft: #a3b8ff;
   --color-lavender: #bcaeff;
   --color-teal: #77cfc9;
@@ -19,35 +20,178 @@
   --color-warning: #93590f;
   --color-danger: #b03a52;
 
+  /* Tinted backgrounds and the text that sits on them */
+  --color-primary-tint: #e8edff;
+  --color-success-tint: #e3f4ee;
+  --color-warning-tint: #fbf0e2;
+  --color-warning-edge: #e8c79c;
+  --color-danger-tint: #fbe8ec;
+  --color-danger-solid: #b03a52;
+  --color-lavender-tint: #f0ebff;
+  --color-lavender-ink: #5b45c4;
+  --color-teal-tint: #e2f5f3;
+  --color-teal-ink: #1d7570;
+  --color-selected: #eaf0ff;
+  --color-unread: #f3f6ff;
+  --color-header: rgb(246 248 254 / 0.82);
+
+  /* Charts (dataviz reference palette, slots 1–2) */
+  --color-series-1: #2a78d6;
+  --color-series-2: #eb6834;
+  --color-chart-grid: #e6ebf4;
+  --color-chart-text: #5b677a;
+  --color-chart-cursor: #c9d1e0;
+
   --radius-card: 20px;
   --radius-control: 14px;
 
-  --shadow-soft: 0 1px 2px rgb(24 35 56 / 0.04), 0 4px 16px rgb(24 35 56 / 0.06);
-  --shadow-lift: 0 2px 4px rgb(24 35 56 / 0.05), 0 12px 32px rgb(24 35 56 / 0.10);
-  --shadow-glow: 0 0 0 1px rgb(102 118 232 / 0.25), 0 8px 28px rgb(122 143 243 / 0.30);
+  --shadow-soft: 0 1px 2px rgb(22 32 54 / 0.04), 0 4px 16px rgb(22 32 54 / 0.06);
+  --shadow-lift: 0 2px 4px rgb(22 32 54 / 0.05), 0 12px 32px rgb(22 32 54 / 0.10);
+  --shadow-glow: 0 0 0 1px rgb(79 110 247 / 0.25), 0 8px 28px rgb(79 110 247 / 0.28);
+  --shadow-button: 0 6px 18px rgb(59 91 230 / 0.30);
+
+  /* Brand gradients, taken from the logo: cyan → blue → violet.
+     "strong" keeps white text at ≥4.5:1 everywhere along the gradient; "brand" is decorative only. */
+  --gradient-strong: linear-gradient(135deg, #1d5fe0 0%, #3b4fe0 50%, #6d3fd8 100%);
+  --gradient-brand: linear-gradient(135deg, #22c7ee 0%, #3b82f6 50%, #8b5cf6 100%);
+  --gradient-text: linear-gradient(100deg, #1d5fe0 0%, #4a43d9 55%, #7a35d0 100%);
+  --gradient-tint: linear-gradient(135deg, rgb(34 199 238 / 0.10) 0%, rgb(59 130 246 / 0.08) 50%, rgb(139 92 246 / 0.12) 100%);
+  --glow-a: rgb(34 199 238 / 0.14);
+  --glow-b: rgb(139 92 246 / 0.14);
+  --glow-c: rgb(59 130 246 / 0.08);
+}
+
+
+:root {
+  color-scheme: light;
+}
+
+/* Dark theme: chosen explicitly (data-theme="dark") or following the device when set to System. */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --color-bg: #0c1020;
+  --color-surface: #141a2e;
+  --color-surface-alt: #1c2440;
+  --color-ink: #e9edf8;
+  --color-ink-soft: #a6b0c6;
+  --color-line: #29324f;
+  --color-primary: #7d93ff;
+  --color-primary-strong: #9fb0ff;
+  --color-blue-soft: #5d77d6;
+  --color-lavender: #9a86f0;
+  --color-teal: #4fb8b1;
+  --color-success: #4fd1a5;
+  --color-warning: #f1b46a;
+  --color-danger: #ff8fa3;
+
+  --color-primary-tint: #222b55;
+  --color-success-tint: #123129;
+  --color-warning-tint: #33281a;
+  --color-warning-edge: #6b4f26;
+  --color-danger-tint: #3a1c27;
+  --color-danger-solid: #c0405b;
+  --color-lavender-tint: #272150;
+  --color-lavender-ink: #c6b8ff;
+  --color-teal-tint: #11302f;
+  --color-teal-ink: #7fdcd4;
+  --color-selected: #222c58;
+  --color-unread: #19213f;
+  --color-header: rgb(12 16 32 / 0.78);
+
+  --color-series-1: #3987e5;
+  --color-series-2: #d95926;
+  --color-chart-grid: #263050;
+  --color-chart-text: #a6b0c6;
+  --color-chart-cursor: #3a4566;
+
+  --shadow-soft: 0 1px 2px rgb(0 0 0 / 0.30), 0 4px 16px rgb(0 0 0 / 0.25);
+  --shadow-lift: 0 2px 4px rgb(0 0 0 / 0.35), 0 12px 32px rgb(0 0 0 / 0.45);
+  --shadow-glow: 0 0 0 1px rgb(125 147 255 / 0.35), 0 8px 28px rgb(91 108 255 / 0.30);
+  --shadow-button: 0 6px 20px rgb(59 91 230 / 0.40);
+
+  --gradient-text: linear-gradient(100deg, #67d8f5 0%, #8ea6ff 50%, #c3a6ff 100%);
+  --gradient-tint: linear-gradient(135deg, rgb(34 199 238 / 0.12) 0%, rgb(59 130 246 / 0.10) 50%, rgb(139 92 246 / 0.16) 100%);
+  --glow-a: rgb(34 199 238 / 0.12);
+  --glow-b: rgb(139 92 246 / 0.18);
+  --glow-c: rgb(59 130 246 / 0.10);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --color-bg: #0c1020;
+    --color-surface: #141a2e;
+    --color-surface-alt: #1c2440;
+    --color-ink: #e9edf8;
+    --color-ink-soft: #a6b0c6;
+    --color-line: #29324f;
+    --color-primary: #7d93ff;
+    --color-primary-strong: #9fb0ff;
+    --color-blue-soft: #5d77d6;
+    --color-lavender: #9a86f0;
+    --color-teal: #4fb8b1;
+    --color-success: #4fd1a5;
+    --color-warning: #f1b46a;
+    --color-danger: #ff8fa3;
+
+    --color-primary-tint: #222b55;
+    --color-success-tint: #123129;
+    --color-warning-tint: #33281a;
+    --color-warning-edge: #6b4f26;
+    --color-danger-tint: #3a1c27;
+    --color-danger-solid: #c0405b;
+    --color-lavender-tint: #272150;
+    --color-lavender-ink: #c6b8ff;
+    --color-teal-tint: #11302f;
+    --color-teal-ink: #7fdcd4;
+    --color-selected: #222c58;
+    --color-unread: #19213f;
+    --color-header: rgb(12 16 32 / 0.78);
+
+    --color-series-1: #3987e5;
+    --color-series-2: #d95926;
+    --color-chart-grid: #263050;
+    --color-chart-text: #a6b0c6;
+    --color-chart-cursor: #3a4566;
+
+    --shadow-soft: 0 1px 2px rgb(0 0 0 / 0.30), 0 4px 16px rgb(0 0 0 / 0.25);
+    --shadow-lift: 0 2px 4px rgb(0 0 0 / 0.35), 0 12px 32px rgb(0 0 0 / 0.45);
+    --shadow-glow: 0 0 0 1px rgb(125 147 255 / 0.35), 0 8px 28px rgb(91 108 255 / 0.30);
+    --shadow-button: 0 6px 20px rgb(59 91 230 / 0.40);
+
+    --gradient-text: linear-gradient(100deg, #67d8f5 0%, #8ea6ff 50%, #c3a6ff 100%);
+    --gradient-tint: linear-gradient(135deg, rgb(34 199 238 / 0.12) 0%, rgb(59 130 246 / 0.10) 50%, rgb(139 92 246 / 0.16) 100%);
+    --glow-a: rgb(34 199 238 / 0.12);
+    --glow-b: rgb(139 92 246 / 0.18);
+    --glow-c: rgb(59 130 246 / 0.10);
+  }
 }
 
 @layer base {
-  html {
-    color-scheme: light;
-  }
   body {
     background-color: var(--color-bg);
     background-image:
-      radial-gradient(60rem 40rem at 10% -10%, rgb(188 174 255 / 0.10), transparent 60%),
-      radial-gradient(50rem 36rem at 100% 0%, rgb(163 184 255 / 0.08), transparent 60%);
+      radial-gradient(60rem 40rem at 0% -10%, var(--glow-a), transparent 60%),
+      radial-gradient(55rem 40rem at 100% 0%, var(--glow-b), transparent 60%),
+      radial-gradient(50rem 40rem at 50% 110%, var(--glow-c), transparent 60%);
     background-attachment: fixed;
     color: var(--color-ink);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
   }
+  /* Page titles carry the brand gradient. */
+  h1 {
+    background-image: var(--gradient-text);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+  }
   :focus-visible {
-    outline: 3px solid rgb(102 118 232 / 0.55);
+    outline: 3px solid rgb(79 110 247 / 0.55);
     outline-offset: 2px;
     border-radius: 10px;
   }
   ::selection {
-    background: rgb(188 174 255 / 0.45);
+    background: rgb(139 92 246 / 0.30);
   }
 }
 
@@ -55,19 +199,28 @@
   .tabular {
     font-variant-numeric: tabular-nums;
   }
-  /* Button gradient: darkened from the brand gradient so white text keeps ≥4.5:1 contrast. */
+  /* Buttons and filled chips: white text keeps ≥4.5:1 contrast along the whole gradient. */
   .bg-primary-gradient {
-    background-image: linear-gradient(135deg, #5566e0 0%, #7259d6 100%);
+    background-image: var(--gradient-strong);
   }
-  /* Decorative brand gradient (DESIGN_SYSTEM.md) — never under body text. */
+  /* Decorative brand gradient — never under body text. */
   .bg-soft-gradient {
-    background-image: linear-gradient(135deg, #7a8ff3 0%, #a995ee 100%);
+    background-image: var(--gradient-brand);
+  }
+  .bg-tint-gradient {
+    background-image: var(--gradient-tint);
   }
   .card {
     background: var(--color-surface);
     border: 1px solid var(--color-line);
     border-radius: var(--radius-card);
     box-shadow: var(--shadow-soft);
+  }
+  /* A card with a thin gradient rim along its top edge (a background layer, so the rounded corners clip it). */
+  .card-accent {
+    background:
+      var(--gradient-brand) top / 100% 3px no-repeat,
+      var(--color-surface);
   }
   .glow-active {
     box-shadow: var(--shadow-glow);
@@ -86,6 +239,6 @@
 }
 
 dialog::backdrop {
-  background: rgb(24 35 56 / 0.35);
+  background: rgb(8 12 24 / 0.45);
   backdrop-filter: blur(2px);
 }

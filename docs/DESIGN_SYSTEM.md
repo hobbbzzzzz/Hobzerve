@@ -24,6 +24,9 @@ Premium, modern, approachable SaaS productivity dashboard. Light-mode first, spa
 - cards: 18–24px radius; buttons: 12–16px; pill chips fully rounded
 - shadows: subtle multi-layer blur; glows only on primary highlights or currently active task, never across all cards
 - animation: 120–220ms subtle transitions; respect reduced motion preference.
+- brand gradient (2026-10-13, matched to the logo): cyan #22C7EE → blue #3B82F6 → violet #8B5CF6 for decoration (card rims, meters, glows); a darker #1D5FE0 → #3B4FE0 → #6D3FD8 for anything carrying white text (buttons, active nav, selected toggles); page titles use a gradient text fill.
+- dark mode (2026-10-13): Light / Dark / System, chosen in the user menu or Settings → Appearance and saved per device. Every colour is a token in `globals.css` with a dark value; never hardcode a hex in a component. Chart series use the reference palette's separate dark steps.
+- capitalisation (2026-10-13): buttons and titles (page, card, dialog, chart, KPI tile, tab) use Title Case; minor words (a, and, of, to, on, the…) stay lowercase unless first or last. Body text, hints and form field labels stay in sentence case.
 
 ## Layout
 - **Top navbar only**, consistent across roles: Dashboard, Tasks, Calendar, Time, Analytics, Notifications; Settings via user menu. No permanent traditional sidebar.

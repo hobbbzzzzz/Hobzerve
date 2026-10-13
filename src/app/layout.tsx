@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import { THEME_BOOT_SCRIPT } from "@/lib/theme";
 
 // Poppins (SIL OFL) self-hosted from the @fontsource package — no runtime call to Google Fonts.
 const poppins = localFont({
@@ -22,14 +23,20 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#f7f9fe",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#f6f8fe" },
+    { media: "(prefers-color-scheme: dark)", color: "#0c1020" },
+  ],
   width: "device-width",
   initialScale: 1,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" dir="ltr" className={poppins.variable}>
+    <html lang="en" dir="ltr" className={poppins.variable} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_BOOT_SCRIPT }} />
+      </head>
       <body className="min-h-dvh">{children}</body>
     </html>
   );
