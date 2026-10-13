@@ -1,0 +1,91 @@
+@import "tailwindcss";
+
+/* Hobzerve design tokens (DESIGN_SYSTEM.md — hex values are PROPOSED defaults). */
+@theme {
+  --font-sans: var(--font-poppins), ui-sans-serif, system-ui, sans-serif;
+
+  --color-bg: #f7f9fe;
+  --color-surface: #ffffff;
+  --color-surface-alt: #f1f5ff;
+  --color-ink: #182338;
+  --color-ink-soft: #556175;
+  --color-line: #e5eaf4;
+  --color-primary: #6676e8;
+  --color-primary-strong: #4d5ccf;
+  --color-blue-soft: #a3b8ff;
+  --color-lavender: #bcaeff;
+  --color-teal: #77cfc9;
+  --color-success: #127560;
+  --color-warning: #93590f;
+  --color-danger: #b03a52;
+
+  --radius-card: 20px;
+  --radius-control: 14px;
+
+  --shadow-soft: 0 1px 2px rgb(24 35 56 / 0.04), 0 4px 16px rgb(24 35 56 / 0.06);
+  --shadow-lift: 0 2px 4px rgb(24 35 56 / 0.05), 0 12px 32px rgb(24 35 56 / 0.10);
+  --shadow-glow: 0 0 0 1px rgb(102 118 232 / 0.25), 0 8px 28px rgb(122 143 243 / 0.30);
+}
+
+@layer base {
+  html {
+    color-scheme: light;
+  }
+  body {
+    background-color: var(--color-bg);
+    background-image:
+      radial-gradient(60rem 40rem at 10% -10%, rgb(188 174 255 / 0.10), transparent 60%),
+      radial-gradient(50rem 36rem at 100% 0%, rgb(163 184 255 / 0.08), transparent 60%);
+    background-attachment: fixed;
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+  :focus-visible {
+    outline: 3px solid rgb(102 118 232 / 0.55);
+    outline-offset: 2px;
+    border-radius: 10px;
+  }
+  ::selection {
+    background: rgb(188 174 255 / 0.45);
+  }
+}
+
+@layer utilities {
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+  /* Button gradient: darkened from the brand gradient so white text keeps ≥4.5:1 contrast. */
+  .bg-primary-gradient {
+    background-image: linear-gradient(135deg, #5566e0 0%, #7259d6 100%);
+  }
+  /* Decorative brand gradient (DESIGN_SYSTEM.md) — never under body text. */
+  .bg-soft-gradient {
+    background-image: linear-gradient(135deg, #7a8ff3 0%, #a995ee 100%);
+  }
+  .card {
+    background: var(--color-surface);
+    border: 1px solid var(--color-line);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-soft);
+  }
+  .glow-active {
+    box-shadow: var(--shadow-glow);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+dialog::backdrop {
+  background: rgb(24 35 56 / 0.35);
+  backdrop-filter: blur(2px);
+}
