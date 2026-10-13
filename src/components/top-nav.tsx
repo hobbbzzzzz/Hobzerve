@@ -1,9 +1,11 @@
 "use client";
 
 import clsx from "clsx";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import logoMark from "@/assets/logo-mark.png";
 import { useWorkspace } from "./workspace-provider";
 import { useNotificationFeed } from "./notification-feed";
 import { SignOutButton } from "./sign-out-button";
@@ -27,9 +29,7 @@ export function TopNav() {
     <header className="sticky top-0 z-30 border-b border-line/80 bg-[rgb(247_249_254/0.85)] backdrop-blur-md">
       <div className="mx-auto flex h-16 max-w-7xl items-center gap-4 px-4 sm:px-6">
         <Link href="/dashboard" className="flex shrink-0 items-center gap-2.5" aria-label="Hobzerve home">
-          <span className="inline-flex size-9 items-center justify-center rounded-[12px] bg-primary-gradient text-base font-bold text-white" aria-hidden>
-            H
-          </span>
+          <Image src={logoMark} alt="" className="size-9" priority />
           <span className="hidden text-lg font-semibold tracking-tight sm:inline">Hobzerve</span>
         </Link>
 
