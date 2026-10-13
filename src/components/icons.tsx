@@ -19,6 +19,7 @@ export {
   CircleDashed,
   Clock,
   DotsSixVertical,
+  DeviceMobile,
   DownloadSimple,
   EnvelopeSimple,
   Eye,

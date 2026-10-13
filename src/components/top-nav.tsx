@@ -10,6 +10,7 @@ import { useWorkspace } from "./workspace-provider";
 import { useNotificationFeed } from "./notification-feed";
 import { SignOutButton } from "./sign-out-button";
 import { ThemeToggle } from "./theme-toggle";
+import { InstallAppButton } from "./pwa";
 import { Bell, CalendarBlank, CaretDown, ChartPieSlice, Clock, Gear, House, ListChecks, UserCircle } from "./icons";
 
 const TABS = [
@@ -157,6 +158,10 @@ function UserMenu({ name, nickname, role, workspace }: { name: string; nickname:
             <Gear size={18} className="text-ink-soft" />
             Settings
           </Link>
+          <InstallAppButton
+            className="flex w-full items-center gap-2 rounded-[10px] px-3 py-2 text-left text-sm hover:bg-surface-alt"
+            onDone={() => setOpen(false)}
+          />
           <div role="menuitem" className="rounded-[10px] px-3 py-2 hover:bg-surface-alt">
             <SignOutButton className="flex w-full items-center gap-2 text-sm" />
           </div>

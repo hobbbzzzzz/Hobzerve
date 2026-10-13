@@ -69,6 +69,18 @@ Open http://localhost:3000 and sign in with either seeded account.
 
 **With a single Supabase project, Preview deployments use the same database as production.** Anything you click on a preview URL creates real records. Either treat previews as real, or remove the Supabase variables from the Preview environment until a separate project exists.
 
+## Installing as an app (PWA)
+
+Hobzerve is an installable web app: same URL, its own window and icon, no app store.
+
+- **Desktop (Chrome / Edge):** user menu → **Install App**, or the install icon in the address bar.
+- **Android (Chrome):** user menu → **Install App**, or browser menu → *Install app*.
+- **iPhone / iPad:** open in **Safari** → Share → **Add to Home Screen** (user menu → Install App shows these steps).
+- **Mac (Safari):** File → **Add to Dock**.
+
+The service worker (`public/sw.js`) never caches pages or data; it only shows `offline.html` when there's no connection.
+Installing needs HTTPS, which Vercel provides.
+
 ## Tests
 
 ```bash
