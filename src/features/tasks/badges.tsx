@@ -1,5 +1,5 @@
 import { Badge, type Tone } from "@/components/ui/badge";
-import { FlagBanner, Lock, Repeat, Sparkle, Warning } from "@/components/icons";
+import { FlagBanner, Lock, Repeat, Sparkle, Warning, UserCircle } from "@/components/icons";
 import { PRIORITY_LABEL, STATUS_LABEL } from "@/lib/labels";
 import { relativeDue } from "@/lib/dates";
 import type { PriorityLevel, Task, TaskStatus } from "@/lib/types";
@@ -39,9 +39,11 @@ export function DueBadge({ task }: { task: Pick<Task, "current_due_at" | "status
   );
 }
 
-export function OriginBadge({ task }: { task: Pick<Task, "origin" | "recurrence_template_id"> }) {
+export function OriginBadge({ task }: { task: Pick<Task, "origin" | "recurrence_template_id" | "creator_id" | "assignee_id"> }) {
   if (task.recurrence_template_id) return <Badge tone="teal" icon={<Repeat size={12} />}>Routine</Badge>;
   if (task.origin === "employee_initiative") return <Badge tone="lavender" icon={<Sparkle size={12} />}>Initiative</Badge>;
+  // Logged by the employee as something the manager asked for (tasks the manager created need no badge).
+  if (task.creator_id === task.assignee_id) return <Badge tone="primary" icon={<UserCircle size={12} />}>Manager Request</Badge>;
   return null;
 }
 

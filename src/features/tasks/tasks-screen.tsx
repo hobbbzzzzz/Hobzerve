@@ -201,7 +201,7 @@ export function TasksScreen() {
           <Select aria-label="Origin" value={filters.origin} onChange={(e) => set("origin", e.target.value as OriginFilter)}>
             <option value="any">Any origin</option>
             <option value="initiative">Employee initiative</option>
-            <option value="assigned">Assigned</option>
+            <option value="assigned">Manager request</option>
             <option value="routine">Routine</option>
           </Select>
           <Select aria-label="Creator" value={filters.creator} onChange={(e) => set("creator", e.target.value)}>

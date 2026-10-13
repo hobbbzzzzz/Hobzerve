@@ -9,7 +9,9 @@ import { useWorkspace } from "@/components/workspace-provider";
 import { useRpc } from "@/lib/client/hooks";
 import { cairoLocalToIso } from "@/lib/dates";
 import { COMPLEXITY_LABEL, PRIORITY_LABEL, PRIORITY_ORDER, WORK_TYPE_LABEL } from "@/lib/labels";
-import type { Category, PriorityLevel, Project, Task, TaskComplexity, TaskQueue, TaskWorkType } from "@/lib/types";
+import type { Category, PriorityLevel, Project, Task, TaskComplexity, TaskOrigin, TaskQueue, TaskWorkType } from "@/lib/types";
+import { Segmented } from "@/components/ui/misc";
+import { Sparkle, UserCircle } from "@/components/icons";
 import { ProjectBadge, useProjects } from "@/features/projects/projects";
 
 function parseLabels(s: string): string[] {
@@ -43,6 +45,7 @@ export function NewTaskDialog({
   const [description, setDescription] = useState("");
   const [categoryId, setCategoryId] = useState(parent?.category_id ?? "");
   const [projectId, setProjectId] = useState(defaultProject ?? "");
+  const [origin, setOrigin] = useState<TaskOrigin>("employee_initiative");
   const { projects } = useProjects();
   const [workType, setWorkType] = useState<TaskWorkType>(parent ? "one_off" : "one_off");
   const [complexity, setComplexity] = useState<TaskComplexity>("moderate");
@@ -87,6 +90,7 @@ export function NewTaskDialog({
         p_expected_deliverables: deliverables.split("\n").map((x) => x.trim()).filter(Boolean),
         p_request_id: requestId,
         p_project: parent ? null : projectId || null,
+        p_origin: isManager || parent ? null : origin,
       },
       { success: parent ? "Subtask created" : "Task created" },
     );
@@ -106,7 +110,7 @@ export function NewTaskDialog({
       size="lg"
       title={parent ? `New Subtask of "${parent.title}"` : "New Task"}
       description={
-        isManager ? "The employee is notified. They control status and progress." : "Tasks you create are tagged as your initiative. The manager is notified and sets priority."
+        isManager ? "The employee is notified. They control status and progress." : "Say whether this is your own initiative or something the manager asked for. The manager is notified and sets priority."
       }
       footer={
         <>
@@ -131,6 +135,11 @@ export function NewTaskDialog({
         <div className="sm:col-span-2">
           <Field label="Description">{(id) => <Textarea id={id} value={description} onChange={(e) => setDescription(e.target.value)} />}</Field>
         </div>
+        {!isManager && !parent && (
+          <div className="sm:col-span-2">
+            <OriginChoice value={origin} onChange={setOrigin} />
+          </div>
+        )}
         {parent ? (
           <ParentProjectNote projectId={parent.project_id} projects={projects} />
         ) : (
@@ -232,6 +241,9 @@ export function EditTaskDialog({ open, onClose, task, categories }: { open: bool
   const [description, setDescription] = useState(task.description);
   const [categoryId, setCategoryId] = useState(task.category_id ?? "");
   const [projectId, setProjectId] = useState(task.project_id ?? "");
+  const [origin, setOrigin] = useState<TaskOrigin>(task.origin);
+  // Only tasks the employee created can be re-labelled; the manager's own tasks are always manager requests.
+  const originEditable = !task.parent_task_id && task.creator_id === task.assignee_id;
   const { projects } = useProjects();
   const [workType, setWorkType] = useState<TaskWorkType>(task.work_type);
   const [complexity, setComplexity] = useState<TaskComplexity>(task.complexity);
@@ -267,6 +279,7 @@ export function EditTaskDialog({ open, onClose, task, categories }: { open: bool
                     description,
                     category_id: categoryId || null,
                     ...(task.parent_task_id ? {} : { project_id: projectId || null }),
+                    ...(originEditable ? { origin } : {}),
                     work_type: workType,
                     complexity,
                     estimated_minutes: estimate,
@@ -290,6 +303,11 @@ export function EditTaskDialog({ open, onClose, task, categories }: { open: bool
         <div className="sm:col-span-2">
           <Field label="Description">{(id) => <Textarea id={id} rows={6} value={description} onChange={(e) => setDescription(e.target.value)} />}</Field>
         </div>
+        {originEditable && (
+          <div className="sm:col-span-2">
+            <OriginChoice value={origin} onChange={setOrigin} />
+          </div>
+        )}
         {task.parent_task_id ? (
           <ParentProjectNote projectId={task.project_id} projects={projects} />
         ) : (
@@ -374,6 +392,27 @@ function ParentProjectNote({ projectId, projects }: { projectId: string | null; 
         {project ? <ProjectBadge project={project} /> : "General Task"}
         <span className="text-xs">· follows the parent task</span>
       </div>
+    </div>
+  );
+}
+
+/** Initiative vs manager request. Only "own initiative" counts toward the initiative figure in analytics. */
+function OriginChoice({ value, onChange }: { value: TaskOrigin; onChange: (v: TaskOrigin) => void }) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <p className="text-sm font-medium text-ink">Who asked for this?</p>
+      <Segmented
+        label="Who asked for this?"
+        value={value}
+        onChange={onChange}
+        options={[
+          { value: "employee_initiative", label: "My Initiative", icon: <Sparkle size={16} /> },
+          { value: "assigned", label: "Manager Request", icon: <UserCircle size={16} /> },
+        ]}
+      />
+      <p className="text-xs text-ink-soft">
+        {value === "employee_initiative" ? "Counts toward your own-initiative figure in Analytics." : "Recorded as work the manager asked for; it doesn't count as your initiative."}
+      </p>
     </div>
   );
 }
