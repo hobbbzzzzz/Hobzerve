@@ -1,0 +1,10 @@
+# Minimal Supabase CLI config for `supabase link` / `supabase db push`.
+# The CLI fills every unspecified setting with its defaults.
+project_id = "hobzerve"
+
+[auth]
+# Decision 93: accounts are seeded; nobody signs up from the app.
+enable_signup = false
+
+[auth.email]
+enable_signup = false
