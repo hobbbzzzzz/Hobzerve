@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { THEME_BOOT_SCRIPT } from "@/lib/theme";
+import { PwaRegister } from "@/components/pwa";
 
 // Poppins (SIL OFL) self-hosted from the @fontsource package — no runtime call to Google Fonts.
 const poppins = localFont({
@@ -20,6 +21,10 @@ export const metadata: Metadata = {
   title: { default: "Hobzerve", template: "%s · Hobzerve" },
   description: "Employee-owned work tracking",
   robots: { index: false, follow: false },
+  applicationName: "Hobzerve",
+  // iPhone / iPad: run full-screen when opened from the home screen.
+  appleWebApp: { capable: true, title: "Hobzerve", statusBarStyle: "default" },
+  formatDetection: { telephone: false },
 };
 
 export const viewport: Viewport = {
@@ -37,7 +42,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <script dangerouslySetInnerHTML={{ __html: THEME_BOOT_SCRIPT }} />
       </head>
-      <body className="min-h-dvh">{children}</body>
+      <body className="min-h-dvh">
+        {children}
+        <PwaRegister />
+      </body>
     </html>
   );
 }

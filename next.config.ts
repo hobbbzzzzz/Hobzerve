@@ -11,6 +11,8 @@ const nextConfig: NextConfig = {
   // Baseline security headers (A35). No script-src policy: Next.js inline bootstrapping would need nonces.
   async headers() {
     return [
+      // The browser must always re-check the service worker so updates reach installed apps.
+      { source: "/sw.js", headers: [{ key: "Cache-Control", value: "no-cache, no-store, must-revalidate" }] },
       {
         source: "/:path*",
         headers: [
