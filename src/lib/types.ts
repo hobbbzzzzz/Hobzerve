@@ -22,6 +22,8 @@ export interface Profile {
   id: string;
   email: string;
   display_name: string;
+  /** Chosen by the person; used only in greetings and the user menu. Records keep display_name. */
+  nickname: string | null;
   job_title: string | null;
   preferences: { muted_event_types?: string[] } & Record<string, unknown>;
 }
@@ -43,6 +45,19 @@ export interface Category {
   archived_at: string | null;
 }
 
+export type ProjectColor = "blue" | "sky" | "teal" | "green" | "lime" | "amber" | "orange" | "red" | "pink" | "purple" | "violet" | "slate";
+
+export interface Project {
+  id: string;
+  workspace_id: string;
+  name: string;
+  color: ProjectColor;
+  sort_order: number;
+  created_by: string;
+  archived_at: string | null;
+  created_at: string;
+}
+
 export interface Task {
   id: string;
   workspace_id: string;
@@ -52,6 +67,7 @@ export interface Task {
   recurrence_template_id: string | null;
   occurrence_date: string | null;
   category_id: string | null;
+  project_id: string | null;
   title: string;
   description: string;
   labels: string[];

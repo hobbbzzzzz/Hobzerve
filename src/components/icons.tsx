@@ -25,6 +25,7 @@ export {
   FilePdf,
   Fingerprint,
   FlagBanner,
+  FolderSimple,
   Gear,
   HandPalm,
   House,

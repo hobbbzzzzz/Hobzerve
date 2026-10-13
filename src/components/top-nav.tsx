@@ -42,7 +42,7 @@ export function TopNav() {
 
         <div className="ml-auto flex items-center gap-3 lg:ml-0">
           <SyncIndicator state={syncState} lastSyncedAt={lastSyncedAt} />
-          <UserMenu name={profile.display_name} role={role} workspace={workspace.name} />
+          <UserMenu name={profile.display_name} nickname={profile.nickname} role={role} workspace={workspace.name} />
         </div>
       </div>
       <nav aria-label="Main" className="flex gap-1 overflow-x-auto px-3 pb-2 lg:hidden">
@@ -108,7 +108,7 @@ function SyncIndicator({ state, lastSyncedAt }: { state: "live" | "connecting" |
   );
 }
 
-function UserMenu({ name, role, workspace }: { name: string; role: string; workspace: string }) {
+function UserMenu({ name, nickname, role, workspace }: { name: string; nickname: string | null; role: string; workspace: string }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -135,13 +135,14 @@ function UserMenu({ name, role, workspace }: { name: string; role: string; works
         className="inline-flex h-10 items-center gap-2 rounded-[12px] px-2 text-sm font-medium hover:bg-surface"
       >
         <UserCircle size={26} className="text-primary-strong" />
-        <span className="hidden max-w-32 truncate sm:inline">{name}</span>
+        <span className="hidden max-w-32 truncate sm:inline">{nickname ?? name}</span>
         <CaretDown size={14} className="text-ink-soft" />
       </button>
       {open && (
         <div role="menu" className="absolute right-0 mt-2 w-64 rounded-[16px] border border-line bg-surface p-2 shadow-[var(--shadow-lift)]">
           <div className="px-3 py-2">
-            <p className="truncate text-sm font-semibold">{name}</p>
+            <p className="truncate text-sm font-semibold">{nickname ?? name}</p>
+            {nickname && <p className="truncate text-xs text-ink-soft">{name}</p>}
             <p className="truncate text-xs text-ink-soft">
               {role === "manager" ? "Manager" : "Employee"} · {workspace}
             </p>

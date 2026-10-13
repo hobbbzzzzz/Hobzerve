@@ -4,12 +4,14 @@ import clsx from "clsx";
 import { ProgressBar } from "@/components/ui/misc";
 import { Badge } from "@/components/ui/badge";
 import { TreeStructure, Warning } from "@/components/icons";
-import type { Category, Task } from "@/lib/types";
+import type { Category, Project, Task } from "@/lib/types";
+import { ProjectBadge } from "@/features/projects/projects";
 import { DueBadge, OriginBadge, PriorityBadge, StatusBadge } from "./badges";
 
 export function TaskCard({
   task,
   category,
+  project,
   subtaskCount,
   blocked,
   onOpen,
@@ -18,6 +20,7 @@ export function TaskCard({
 }: {
   task: Task;
   category?: Category;
+  project?: Project;
   subtaskCount?: number;
   blocked?: boolean;
   onOpen: (t: Task) => void;
@@ -44,6 +47,7 @@ export function TaskCard({
         <p className="flex-1 font-medium leading-snug text-ink group-hover:text-primary-strong">{task.title}</p>
       </div>
       <div className="flex flex-wrap gap-1.5">
+        {project && <ProjectBadge project={project} />}
         {showStatus && <StatusBadge status={task.status} />}
         <PriorityBadge level={task.priority_level} />
         <DueBadge task={task} />

@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button, IconButton } from "@/components/ui/button";
@@ -12,7 +13,7 @@ import { useLoad, useRpc, unwrap } from "@/lib/client/hooks";
 import { getBrowserClient } from "@/lib/supabase/client";
 import { COMPLEXITY_LABEL, DOW_LABEL, PRIORITY_LABEL, PRIORITY_ORDER } from "@/lib/labels";
 import type { Category, PriorityLevel, RecurrenceTemplate, TaskComplexity } from "@/lib/types";
-import { ArchiveBox, ArrowCounterClockwise, Bell, Gear, PencilSimple, Plus, Repeat, Stack, Moon } from "@/components/icons";
+import { ArchiveBox, ArrowCounterClockwise, Bell, Gear, PencilSimple, Plus, Repeat, Stack, Moon, UserCircle } from "@/components/icons";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { TimeSettingsCard } from "./time-settings";
 import { EmailSettingsCard } from "./email-settings";
@@ -43,6 +44,7 @@ export function SettingsScreen() {
           {isManager ? "Workspace settings and your personal preferences." : "Your personal preferences. Workspace settings are managed by the manager."}
         </p>
       </div>
+      <NicknameCard />
       <Card>
         <CardHeader icon={<Moon size={20} />} title="Appearance" subtitle="Saved on this device. System follows your device's light or dark setting." />
         <div className="px-5 pb-5">
@@ -72,6 +74,36 @@ export function SettingsScreen() {
         </dl>
       </Card>
     </div>
+  );
+}
+
+function NicknameCard() {
+  const router = useRouter();
+  const { profile } = useWorkspace();
+  const { call, pending } = useRpc();
+  const [nickname, setNickname] = useState(profile.nickname ?? "");
+  const dirty = nickname.trim() !== (profile.nickname ?? "");
+  return (
+    <Card>
+      <CardHeader icon={<UserCircle size={20} />} title="Profile" subtitle={`${profile.display_name} · ${profile.email}`} />
+      <form
+        className="flex flex-wrap items-end gap-3 px-5 pb-5"
+        onSubmit={async (e) => {
+          e.preventDefault();
+          const r = await call("set_nickname", { p_nickname: nickname.trim() }, { success: nickname.trim() ? "Nickname saved" : "Nickname removed" });
+          if (r.ok) router.refresh();
+        }}
+      >
+        <div className="min-w-56 flex-1">
+          <Field label="Nickname" hint="Used in your greeting and the menu. Reports, history and emails keep your full name.">
+            {(id) => <Input id={id} value={nickname} onChange={(e) => setNickname(e.target.value)} maxLength={40} placeholder={profile.display_name.split(" ")[0]} />}
+          </Field>
+        </div>
+        <Button type="submit" variant="primary" disabled={!dirty} loading={pending} className="mb-6">
+          Save Nickname
+        </Button>
+      </form>
+    </Card>
   );
 }
 

@@ -11,15 +11,16 @@ import { useWorkspace } from "@/components/workspace-provider";
 import { useLoad, useRpc } from "@/lib/client/hooks";
 import { daysUntil } from "@/lib/dates";
 import { PRIORITY_LABEL, PRIORITY_ORDER, STATUS_LABEL, STATUS_ORDER, isOpenStatus } from "@/lib/labels";
-import type { Category, Task, TaskQueue, TaskStatus } from "@/lib/types";
-import { ArrowDown, ArrowUp, DotsSixVertical, Kanban, ListBullets, MagnifyingGlass, Plus, Tray } from "@/components/icons";
+import type { Category, Project, Task, TaskQueue, TaskStatus } from "@/lib/types";
+import { ArrowDown, ArrowUp, DotsSixVertical, FolderSimple, Kanban, ListBullets, MagnifyingGlass, Plus, Tray } from "@/components/icons";
+import { ProjectBadge, ProjectControls, ProjectDialog, ProjectIcon, useProjects } from "@/features/projects/projects";
 import { loadBoard } from "./data";
 import { TaskCard } from "./task-card";
 import { TaskDrawer } from "./task-drawer";
 import { NewTaskDialog } from "./task-form";
 import { DueBadge, OriginBadge, PriorityBadge, StatusBadge } from "./badges";
 
-type View = "kanban" | "list";
+type View = "kanban" | "list" | "projects";
 type DeadlineFilter = "any" | "overdue" | "week" | "none";
 type OriginFilter = "any" | "initiative" | "assigned" | "routine";
 
@@ -27,6 +28,7 @@ interface Filters {
   q: string;
   queue: "all" | TaskQueue;
   category: string;
+  project: string;
   status: "any" | TaskStatus;
   priority: string;
   deadline: DeadlineFilter;
@@ -40,11 +42,12 @@ export function TasksScreen() {
   const pathname = usePathname();
   const params = useSearchParams();
   const { workspace, isManager, members, nameOf } = useWorkspace();
-  const view: View = params.get("view") === "list" ? "list" : "kanban";
+  const view: View = params.get("view") === "list" ? "list" : params.get("view") === "projects" ? "projects" : "kanban";
   const [filters, setFilters] = useState<Filters>({
     q: "",
     queue: (params.get("queue") as TaskQueue) || "all",
     category: "",
+    project: "",
     status: "any",
     priority: "",
     deadline: "any",
@@ -52,6 +55,9 @@ export function TasksScreen() {
     creator: "",
     archived: false,
   });
+  const { projects } = useProjects();
+  const projectsById = useMemo(() => new Map(projects.map((p) => [p.id, p])), [projects]);
+  const [newTaskProject, setNewTaskProject] = useState<string | null>(null);
   const [openTask, setOpenTask] = useState<string | null>(params.get("task"));
   const [creating, setCreating] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
@@ -85,6 +91,7 @@ export function TasksScreen() {
       if (q && !`${t.title} ${t.description} ${t.labels.join(" ")}`.toLowerCase().includes(q)) return false;
       if (filters.queue !== "all" && t.queue !== filters.queue) return false;
       if (filters.category && t.category_id !== filters.category) return false;
+      if (filters.project && (t.project_id ?? "none") !== filters.project) return false;
       if (filters.status !== "any" && t.status !== filters.status) return false;
       if (filters.priority && t.priority_level !== filters.priority) return false;
       if (filters.creator && t.creator_id !== filters.creator) return false;
@@ -101,6 +108,7 @@ export function TasksScreen() {
   const activeFilterCount =
     (filters.queue !== "all" ? 1 : 0) +
     (filters.category ? 1 : 0) +
+    (filters.project ? 1 : 0) +
     (filters.status !== "any" ? 1 : 0) +
     (filters.priority ? 1 : 0) +
     (filters.deadline !== "any" ? 1 : 0) +
@@ -116,7 +124,7 @@ export function TasksScreen() {
             {isManager ? "Rank the queues and follow progress. The employee controls status and progress." : "Your board. The manager ranks the queues; you run the work."}
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Segmented
             label="View"
             value={view}
@@ -124,6 +132,7 @@ export function TasksScreen() {
             options={[
               { value: "kanban", label: "Kanban", icon: <Kanban size={16} /> },
               { value: "list", label: "List", icon: <ListBullets size={16} /> },
+              { value: "projects", label: "Projects", icon: <FolderSimple size={16} /> },
             ]}
           />
           <Button variant="primary" icon={<Plus size={18} />} onClick={() => setCreating(true)}>
@@ -155,6 +164,17 @@ export function TasksScreen() {
                 {c.name}
               </option>
             ))}
+          </Select>
+          <Select aria-label="Project" value={filters.project} onChange={(e) => set("project", e.target.value)}>
+            <option value="">All projects</option>
+            <option value="none">General tasks</option>
+            {projects
+              .filter((p) => !p.archived_at)
+              .map((p) => (
+                <option key={p.id} value={p.id}>
+                  {p.name}
+                </option>
+              ))}
           </Select>
           <Select aria-label="Status" value={filters.status} onChange={(e) => set("status", e.target.value as Filters["status"])}>
             <option value="any">Any status</option>
@@ -203,7 +223,7 @@ export function TasksScreen() {
             <button
               type="button"
               className="font-medium text-primary-strong hover:underline"
-              onClick={() => setFilters((f) => ({ ...f, queue: "all", category: "", status: "any", priority: "", deadline: "any", origin: "any", creator: "" }))}
+              onClick={() => setFilters((f) => ({ ...f, queue: "all", category: "", project: "", status: "any", priority: "", deadline: "any", origin: "any", creator: "" }))}
             >
               Clear Filters
             </button>
@@ -216,14 +236,26 @@ export function TasksScreen() {
         <div className="py-10 text-center">
           <Spinner label="Loading tasks" />
         </div>
+      ) : view === "projects" ? (
+        <ProjectsView
+          tasks={visible}
+          projects={projects}
+          categories={categoriesById}
+          onOpen={(t) => setOpenTask(t.id)}
+          onNewTask={(projectId) => {
+            setNewTaskProject(projectId);
+            setCreating(true);
+          }}
+        />
       ) : view === "kanban" ? (
-        <KanbanView tasks={visible} categories={categoriesById} subtaskCount={subtaskCount} blocked={blocked} onOpen={(t) => setOpenTask(t.id)} />
+        <KanbanView tasks={visible} categories={categoriesById} projects={projectsById} subtaskCount={subtaskCount} blocked={blocked} onOpen={(t) => setOpenTask(t.id)} />
       ) : (
         <ListView
           tasks={visible}
           allTasks={data?.tasks ?? []}
           filtered={activeFilterCount > 0 || filters.q.trim() !== "" || filters.archived}
           categories={categoriesById}
+          projects={projectsById}
           onOpen={(t) => setOpenTask(t.id)}
         />
       )}
@@ -235,7 +267,17 @@ export function TasksScreen() {
       )}
 
       <TaskDrawer taskId={openTask} onClose={() => setOpenTask(null)} categories={data?.categories ?? []} />
-      <NewTaskDialog open={creating} onClose={() => setCreating(false)} categories={data?.categories ?? []} defaultQueue={filters.queue === "active" ? "active" : "planned"} />
+      <NewTaskDialog
+        key={newTaskProject ?? "none"}
+        open={creating}
+        onClose={() => {
+          setCreating(false);
+          setNewTaskProject(null);
+        }}
+        categories={data?.categories ?? []}
+        defaultQueue={filters.queue === "active" ? "active" : "planned"}
+        defaultProject={newTaskProject}
+      />
     </div>
   );
 }
@@ -243,12 +285,14 @@ export function TasksScreen() {
 function KanbanView({
   tasks,
   categories,
+  projects,
   subtaskCount,
   blocked,
   onOpen,
 }: {
   tasks: Task[];
   categories: Map<string, Category>;
+  projects: Map<string, Project>;
   subtaskCount: Map<string, number>;
   blocked: Set<string>;
   onOpen: (t: Task) => void;
@@ -275,6 +319,7 @@ function KanbanView({
                     key={t.id}
                     task={t}
                     category={t.category_id ? categories.get(t.category_id) : undefined}
+                    project={t.project_id ? projects.get(t.project_id) : undefined}
                     subtaskCount={subtaskCount.get(t.id)}
                     blocked={blocked.has(t.id) && isOpenStatus(t.status)}
                     onOpen={onOpen}
@@ -294,12 +339,14 @@ function ListView({
   allTasks,
   filtered,
   categories,
+  projects,
   onOpen,
 }: {
   tasks: Task[];
   allTasks: Task[];
   filtered: boolean;
   categories: Map<string, Category>;
+  projects: Map<string, Project>;
   onOpen: (t: Task) => void;
 }) {
   const open = tasks.filter((t) => isOpenStatus(t.status) && !t.archived_at);
@@ -314,6 +361,7 @@ function ListView({
           fullQueue={allTasks.filter((t) => !t.parent_task_id && !t.archived_at && isOpenStatus(t.status) && t.queue === q)}
           filtered={filtered}
           categories={categories}
+          projects={projects}
           onOpen={onOpen}
         />
       ))}
@@ -322,7 +370,13 @@ function ListView({
           <summary className="cursor-pointer px-5 py-4 text-sm font-semibold">Closed and archived ({closed.length})</summary>
           <ul className="divide-y divide-line border-t border-line">
             {closed.map((t) => (
-              <Row key={t.id} task={t} category={t.category_id ? categories.get(t.category_id) : undefined} onOpen={onOpen} />
+              <Row
+                key={t.id}
+                task={t}
+                category={t.category_id ? categories.get(t.category_id) : undefined}
+                project={t.project_id ? projects.get(t.project_id) : undefined}
+                onOpen={onOpen}
+              />
             ))}
           </ul>
         </details>
@@ -337,6 +391,7 @@ function QueueSection({
   fullQueue,
   filtered,
   categories,
+  projects,
   onOpen,
 }: {
   queue: TaskQueue;
@@ -344,6 +399,7 @@ function QueueSection({
   fullQueue: Task[];
   filtered: boolean;
   categories: Map<string, Category>;
+  projects: Map<string, Project>;
   onOpen: (t: Task) => void;
 }) {
   const { isManager, workspace } = useWorkspace();
@@ -392,6 +448,7 @@ function QueueSection({
               key={t.id}
               task={t}
               category={t.category_id ? categories.get(t.category_id) : undefined}
+              project={t.project_id ? projects.get(t.project_id) : undefined}
               onOpen={onOpen}
               dragging={dragId === t.id}
               over={overId === t.id && dragId !== t.id}
@@ -433,6 +490,8 @@ function QueueSection({
 function Row({
   task,
   category,
+  project,
+  showRank = true,
   onOpen,
   controls,
   draggable,
@@ -445,6 +504,8 @@ function Row({
 }: {
   task: Task;
   category?: Category;
+  project?: Project;
+  showRank?: boolean;
   onOpen: (t: Task) => void;
   controls?: React.ReactNode;
   draggable?: boolean;
@@ -477,10 +538,11 @@ function Row({
       )}
     >
       {draggable && <DotsSixVertical size={18} className="shrink-0 text-ink-soft" aria-hidden />}
-      <span className="tabular w-7 shrink-0 text-center text-sm font-semibold text-primary-strong">{task.priority_rank ?? "–"}</span>
+      {showRank && <span className="tabular w-7 shrink-0 text-center text-sm font-semibold text-primary-strong">{task.priority_rank ?? "–"}</span>}
       <button type="button" onClick={() => onOpen(task)} className="min-w-0 flex-1 text-left">
         <p className="truncate font-medium hover:text-primary-strong">{task.title}</p>
         <div className="mt-1 flex flex-wrap gap-1.5">
+          {project && <ProjectBadge project={project} />}
           <StatusBadge status={task.status} />
           <PriorityBadge level={task.priority_level} />
           <DueBadge task={task} />
@@ -493,5 +555,107 @@ function Row({
       </div>
       {controls}
     </li>
+  );
+}
+
+function ProjectsView({
+  tasks,
+  projects,
+  categories,
+  onOpen,
+  onNewTask,
+}: {
+  tasks: Task[];
+  projects: Project[];
+  categories: Map<string, Category>;
+  onOpen: (t: Task) => void;
+  onNewTask: (projectId: string | null) => void;
+}) {
+  const [editing, setEditing] = useState<Project | "new" | null>(null);
+  const [showArchived, setShowArchived] = useState(false);
+  const live = tasks.filter((t) => !t.archived_at);
+  const groups: Array<{ project: Project | null; open: Task[]; done: number }> = [...projects.filter((p) => !p.archived_at), null].map((project) => {
+    const mine = live.filter((t) => (t.project_id ?? null) === (project?.id ?? null));
+    return {
+      project,
+      open: mine
+        .filter((t) => isOpenStatus(t.status))
+        .sort((a, b) => (a.queue === b.queue ? (a.priority_rank ?? 1e9) - (b.priority_rank ?? 1e9) : a.queue === "active" ? -1 : 1)),
+      done: mine.filter((t) => t.status === "completed").length,
+    };
+  });
+  const archived = projects.filter((p) => p.archived_at);
+
+  return (
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-wrap items-center justify-between gap-2">
+        <p className="text-sm text-ink-soft">Open tasks grouped by project. Tasks without a project are general tasks.</p>
+        <Button variant="primary" icon={<Plus size={18} />} onClick={() => setEditing("new")}>
+          New Project
+        </Button>
+      </div>
+
+      {groups.map(({ project, open, done }) => (
+        <section
+          key={project?.id ?? "general"}
+          className={clsx("card overflow-hidden", project && `project-${project.color}`)}
+          // The project's colour as a rim along the top edge, matching its label.
+          style={project ? { background: "linear-gradient(var(--project-dot), var(--project-dot)) top / 100% 3px no-repeat, var(--color-surface)" } : undefined}
+          aria-label={project?.name ?? "General Tasks"}
+        >
+          <header className="flex flex-wrap items-center gap-3 border-b border-line px-5 py-4">
+            <ProjectIcon project={project} />
+            <div className="min-w-0 flex-1 basis-40">
+              <h2 className="truncate text-base font-semibold">{project ? project.name : "General Tasks"}</h2>
+              <p className="tabular text-xs text-ink-soft">
+                {open.length} open · {done} completed
+              </p>
+            </div>
+            <div className="ml-auto flex items-center gap-1">
+              <Button size="sm" icon={<Plus size={16} />} onClick={() => onNewTask(project?.id ?? null)} aria-label={`Add task to ${project?.name ?? "general tasks"}`}>
+                Add Task
+              </Button>
+              {project && <ProjectControls project={project} onEdit={setEditing} />}
+            </div>
+          </header>
+          {open.length === 0 ? (
+            <p className="px-5 py-5 text-sm text-ink-soft">No open tasks{project ? " in this project" : ""}.</p>
+          ) : (
+            <ul className="divide-y divide-line">
+              {open.map((t) => (
+                <Row key={t.id} task={t} showRank={false} category={t.category_id ? categories.get(t.category_id) : undefined} onOpen={onOpen} />
+              ))}
+            </ul>
+          )}
+        </section>
+      ))}
+
+      {projects.length === 0 && (
+        <EmptyState icon={<FolderSimple size={24} />} title="No Projects Yet" action={<Button variant="primary" icon={<Plus size={18} />} onClick={() => setEditing("new")}>Create a Project</Button>}>
+          Group related tasks under a project. Its coloured label shows on every task inside it.
+        </EmptyState>
+      )}
+
+      {archived.length > 0 && (
+        <div className="card">
+          <button type="button" className="w-full px-5 py-4 text-left text-sm font-semibold" aria-expanded={showArchived} onClick={() => setShowArchived((x) => !x)}>
+            Archived Projects ({archived.length})
+          </button>
+          {showArchived && (
+            <ul className="divide-y divide-line border-t border-line">
+              {archived.map((p) => (
+                <li key={p.id} className="flex items-center gap-3 px-5 py-3">
+                  <ProjectBadge project={p} />
+                  <span className="tabular flex-1 text-xs text-ink-soft">{live.filter((t) => t.project_id === p.id).length} tasks</span>
+                  <ProjectControls project={p} onEdit={setEditing} />
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      )}
+
+      <ProjectDialog open={editing !== null} onClose={() => setEditing(null)} project={editing === "new" ? null : editing} />
+    </div>
   );
 }

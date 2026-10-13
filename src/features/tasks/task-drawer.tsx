@@ -10,6 +10,7 @@ import { COMPLEXITY_LABEL, WORK_TYPE_LABEL } from "@/lib/labels";
 import type { Category } from "@/lib/types";
 import { CaretRight } from "@/components/icons";
 import { loadTaskDetail, suggestedProgress } from "./data";
+import { ProjectBadge, useProjects } from "@/features/projects/projects";
 import { DueBadge, OriginBadge, PriorityBadge, StatusBadge } from "./badges";
 import { ProgressControl, TaskActionBar } from "./task-actions";
 import { DeliverablesPanel } from "./deliverables-panel";
@@ -33,6 +34,7 @@ function FullPageLink({ id }: { id: string }) {
 }
 
 function DrawerBody({ taskId, categories }: { taskId: string; categories: Category[] }) {
+  const { projects } = useProjects();
   const { nameOf } = useWorkspace();
   const { data, error, loading } = useLoad(() => loadTaskDetail(taskId), [taskId]);
 
@@ -43,6 +45,7 @@ function DrawerBody({ taskId, categories }: { taskId: string; categories: Catego
   const { task, parent, subtasks } = data;
   const locked = parent?.status === "completed";
   const category = categories.find((c) => c.id === task.category_id);
+  const project = projects.find((p) => p.id === task.project_id);
   const suggested = suggestedProgress(subtasks);
 
   return (
@@ -55,6 +58,7 @@ function DrawerBody({ taskId, categories }: { taskId: string; categories: Catego
         )}
         <h2 className="text-xl leading-snug font-semibold">{task.title}</h2>
         <div className="flex flex-wrap gap-1.5">
+          {project && <ProjectBadge project={project} />}
           <StatusBadge status={task.status} />
           <PriorityBadge level={task.priority_level} />
           <DueBadge task={task} />
@@ -81,6 +85,7 @@ function DrawerBody({ taskId, categories }: { taskId: string; categories: Catego
       <dl className="grid grid-cols-2 gap-x-4 gap-y-3 text-sm">
         <Info label="Deadline (Cairo)">{formatDateTime(task.current_due_at)}</Info>
         <Info label="Queue">{task.queue === "active" ? "Active" : "Planned"}{task.priority_rank ? ` · #${task.priority_rank}` : ""}</Info>
+        <Info label="Project">{project?.name ?? "General Task"}</Info>
         <Info label="Category">{category?.name ?? "—"}</Info>
         <Info label="Work type">{WORK_TYPE_LABEL[task.work_type]}</Info>
         <Info label="Complexity">{COMPLEXITY_LABEL[task.complexity]}</Info>
